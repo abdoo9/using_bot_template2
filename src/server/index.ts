@@ -23,7 +23,9 @@ server.setErrorHandler(async (error, request, response) => {
   }
 });
 
-server.post(`/${config.BOT_TOKEN}`, webhookCallback(bot, "fastify"));
+server.post(`/:botToken`, async (request, response) => {
+  return webhookCallback(bot, "fastify")(request, response);
+});
 
 server.get(`/${config.BOT_TOKEN}/metrics`, async (req, res) => {
   try {
