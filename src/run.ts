@@ -1,11 +1,13 @@
 import "module-alias/register";
 
-import { bot } from "~/bot";
 import { server } from "~/server";
 import { prisma } from "~/prisma";
 import { config } from "~/config";
 import { logger } from "~/logger";
 import { loadLocales } from "~/bot/helpers/i18n";
+import { Bot, Context } from "grammy";
+
+const bot = new Bot<Context>(config.BOT_TOKEN);
 
 // Graceful shutdown
 prisma.$on("beforeExit", async () => {
@@ -33,7 +35,7 @@ const run = async () => {
           })
           .catch((err) => logger.error(err));
       }
-    },
+    }
   );
 };
 run();

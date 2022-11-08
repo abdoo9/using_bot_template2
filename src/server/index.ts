@@ -1,8 +1,8 @@
-import fastify from "fastify";
+import fastify, { RequestPayload } from "fastify";
 import { BotError, webhookCallback } from "grammy";
 import { register } from "prom-client";
 
-import { bot } from "~/bot";
+import { getBot } from "~/bot";
 import { config } from "~/config";
 import { logger } from "~/logger";
 import { handleError } from "~/bot/helpers/error-handler";
@@ -23,8 +23,11 @@ server.setErrorHandler(async (error, request, response) => {
   }
 });
 
-server.post(`/:botToken`, async (request, response) => {
-  return webhookCallback(bot, "fastify")(request, response);
+server.post(`/:botToken`, async (req, res) => {
+  const { botToken } = req.params as { botToken: string };
+  const bot = getBot(botToken);
+
+  return webhookCallback(bot, "fastify")(req, res);
 });
 
 server.get(`/${config.BOT_TOKEN}/metrics`, async (req, res) => {

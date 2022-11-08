@@ -25,37 +25,41 @@ import {
 import { isMultipleLocales } from "~/bot/helpers/i18n";
 import { handleError } from "~/bot/helpers/error-handler";
 
-export const bot = new Bot<Context>(config.BOT_TOKEN);
+export function getBot(botToken: string): Bot<Context> {
+  const bot = new Bot<Context>(botToken);
 
-// Middlewares
+  // Middlewares
 
-bot.api.config.use(apiThrottler());
-bot.api.config.use(parseMode("HTML"));
+  bot.api.config.use(apiThrottler());
+  bot.api.config.use(parseMode("HTML"));
 
-if (config.isDev) {
-  bot.api.config.use(apiCallsLogger);
-  bot.use(updatesLogger());
-}
+  if (config.isDev) {
+    bot.api.config.use(apiCallsLogger);
+    bot.use(updatesLogger());
+  }
 
-bot.use(collectMetrics());
-bot.use(rateLimit());
-bot.use(hydrateReply);
-bot.use(hydrate());
-bot.use(setupSession());
-bot.use(setupLocalContext());
-bot.use(setupLogger());
-bot.use(setupI18n());
-bot.use(setUser());
+  bot.use(collectMetrics());
+  bot.use(rateLimit());
+  bot.use(hydrateReply);
+  bot.use(hydrate());
+  bot.use(setupSession());
+  bot.use(setupLocalContext());
+  bot.use(setupLogger());
+  bot.use(setupI18n());
+  bot.use(setUser());
 
-// Handlers
+  // Handlers
 
-bot.use(botAdminFeature);
-bot.use(welcomeFeature);
+  bot.use(botAdminFeature);
+  bot.use(welcomeFeature);
 
-if (isMultipleLocales) {
-  bot.use(languageSelectFeature);
-}
+  if (isMultipleLocales) {
+    bot.use(languageSelectFeature);
+  }
 
-if (config.isDev) {
-  bot.catch(handleError);
+  if (config.isDev) {
+    bot.catch(handleError);
+  }
+
+  return bot;
 }
