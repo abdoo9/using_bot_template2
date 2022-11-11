@@ -7,3 +7,9 @@ welcome = 👋🏻  Welcome!
 language = 
     .select = Please, select your language
     .changed = Language successfully changed!
+
+token = 
+    .received = Token received {0}
+## 
+
+node-fetch = node-fetch

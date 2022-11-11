@@ -5,12 +5,12 @@ import type { PartialDeep } from "type-fest";
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.user, {
     findByTelegramId: <T extends PartialDeep<Prisma.UserFindUniqueArgs>>(
-      telegramId: number,
+      userId: number,
       args?: Prisma.SelectSubset<T, Prisma.UserFindUniqueArgs>
     ) => {
       const query: Prisma.UserFindUniqueArgs = {
         where: {
-          telegramId,
+          userId,
         },
       };
 
@@ -18,15 +18,15 @@ export const createService = (prisma: PrismaClient) =>
     },
 
     upsertByTelegramId: <T extends PartialDeep<Prisma.UserUpsertArgs>>(
-      telegramId: number,
+      userId: number,
       args: Prisma.SelectSubset<T, Prisma.UserUpsertArgs>
     ) => {
       const query: Prisma.UserUpsertArgs = {
         where: {
-          telegramId,
+          userId,
         },
         create: {
-          telegramId,
+          userId,
         },
         update: {},
       };
@@ -35,12 +35,12 @@ export const createService = (prisma: PrismaClient) =>
     },
 
     updateByTelegramId: <T extends PartialDeep<Prisma.UserUpdateArgs>>(
-      telegramId: number,
+      userId: number,
       args: Prisma.SelectSubset<T, Prisma.UserUpdateArgs>
     ) => {
       const query: Prisma.UserUpdateArgs = {
         where: {
-          telegramId,
+          userId,
         },
         data: {},
       };

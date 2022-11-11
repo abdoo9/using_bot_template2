@@ -43,7 +43,7 @@ featureForOwner.command("admin", logHandle("handle /admin"), async (ctx) => {
 
   let user = await usersService.findByTelegramId(userId, {
     select: {
-      id: true,
+      userId: true,
       role: true,
     },
   });
@@ -62,7 +62,7 @@ featureForOwner.command("admin", logHandle("handle /admin"), async (ctx) => {
     user.role === Role.ADMIN ? "an administrator" : "a regular user";
 
   return Promise.all([
-    ctx.reply(`User with ID ${user.id} is now ${userRoleLabel}`),
+    ctx.reply(`User with ID ${user.userId} is now ${userRoleLabel}`),
     ctx.api.sendMessage(userId, `You're ${userRoleLabel} now`),
     user.role === Role.ADMIN
       ? ctx.api.setMyCommands(
@@ -186,7 +186,7 @@ feature.command(
           {
             scope: {
               type: "chat",
-              chat_id: Number(adminUser.telegramId),
+              chat_id: Number(adminUser.userId),
             },
           }
         )

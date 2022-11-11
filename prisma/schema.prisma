@@ -16,12 +16,57 @@ enum Role {
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
-  telegramId   BigInt   @unique @map("telegram_id")
-  languageCode String?  @map("language_code")
-  role         Role     @default(USER)
-  updatedAt    DateTime @updatedAt @map("updated_at")
-  createdAt    DateTime @default(now()) @map("created_at")
+  userId            BigInt    @id @map("user_id")
+  languageCode      String?   @map("language_code")
+  role              Role      @default(USER)
+  userBots          UserBot[]
+  botsOwned         Bot[]     @relation("botsOwned")
+  messagesSent      Message[] @relation("UserSentMessage")
+  messagesReceived  Message[] @relation("UserReceivedMessage")
+  userIsDeactivated Boolean   @default(false) @map("user_is_deactivated")
+  ChatNotFound      Boolean   @default(false) @map("chat_not_found")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+  createdAt         DateTime  @default(now()) @map("created_at")
 
   @@map(name: "users")
+}
+
+model Bot {
+  botId     BigInt    @id @map("bot_id")
+  token     String    @unique
+  owner     User      @relation(name: "botsOwned", fields: [ownerId], references: [userId])
+  ownerId   BigInt    @map("owner_id")
+  botUsers  UserBot[]
+  groupId   BigInt?   @map("group_id")
+  firstName String?   @map("first_name")
+  username  String?   @map("username")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  @@map(name: "bots")
+}
+
+model Message {
+  messageId BigInt   @id @map("message_id")
+  botId     BigInt   @map("bot_id")
+  sourceId  BigInt   @map("source_id")
+  source    User     @relation(name: "UserSentMessage", fields: [sourceId], references: [userId])
+  destId    BigInt   @map("dest_id")
+  dest      User     @relation(name: "UserReceivedMessage", fields: [destId], references: [userId])
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map(name: "messages")
+}
+
+model UserBot {
+  user         User    @relation(fields: [userId], references: [userId])
+  userId       BigInt  @map("user_id")
+  bot          Bot     @relation(fields: [botId], references: [botId])
+  botId        BigInt  @map("bot_id")
+  userIsBanned Boolean @default(false) @map("user_is_banned")
+  botIsBlocked Boolean @map("bot_is_blocked")
+
+  @@unique([userId, botId], name: "user_bots_pkey")
+  @@map(name: "user_bots")
 }

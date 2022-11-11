@@ -35,6 +35,7 @@ export const getPrivateChatAdminCommands = (options: {
   localeCode: string;
   includeLanguageCommand: boolean;
 }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const t = fluent.withLocale(options.localeCode);
 
   const commands = [

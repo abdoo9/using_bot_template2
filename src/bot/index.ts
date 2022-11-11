@@ -20,6 +20,7 @@ import { apiCallsLogger } from "~/bot/transformers";
 import {
   botAdminFeature,
   languageSelectFeature,
+  reciveTokenFeature,
   welcomeFeature,
 } from "~/bot/features";
 import { isMultipleLocales } from "~/bot/helpers/i18n";
@@ -52,6 +53,8 @@ export function getBot(botToken: string): Bot<Context> {
 
   bot.use(botAdminFeature);
   bot.use(welcomeFeature);
+  bot.use(languageSelectFeature);
+  bot.use(reciveTokenFeature);
 
   if (isMultipleLocales) {
     bot.use(languageSelectFeature);

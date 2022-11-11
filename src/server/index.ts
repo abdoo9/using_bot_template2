@@ -1,4 +1,4 @@
-import fastify, { RequestPayload } from "fastify";
+import fastify from "fastify";
 import { BotError, webhookCallback } from "grammy";
 import { register } from "prom-client";
 
