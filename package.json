@@ -10,7 +10,8 @@
     "build": "npm run clean && tsc",
     "dev": "tsc-watch --onSuccess \"node dist/run.js\"",
     "start": "node dist/run.js",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "watch:debug": "nodemon --inspect=5858 -e ts,tsx --exec node -r ts-node/register ./src/run.ts"
   },
   "author": "deptyped <deptyped@gmail.com>",
   "license": "MIT",
@@ -54,6 +55,7 @@
     "eslint-plugin-prettier": "4.2.1",
     "husky": "8.0.1",
     "lint-staged": "13.0.3",
+    "nodemon": "^2.0.20",
     "prettier": "2.7.1",
     "prisma": "4.4.0",
     "rimraf": "3.0.2",

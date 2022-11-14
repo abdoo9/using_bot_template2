@@ -16,6 +16,18 @@ export const createService = (prisma: PrismaClient) =>
 
       return prisma.bot.findUnique(_.merge(query, args));
     },
+    findUserBots: <T extends PartialDeep<Prisma.BotFindManyArgs>>(
+      ownerId: number,
+      args?: Prisma.SelectSubset<T, Prisma.BotFindManyArgs>
+    ) => {
+      const query: Prisma.BotFindManyArgs = {
+        where: {
+          ownerId,
+        },
+      };
+
+      return prisma.bot.findMany(_.merge(query, args));
+    },
 
     upsertByBotId: <T extends PartialDeep<Prisma.BotUpsertArgs>>(
       botId: number,

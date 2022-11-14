@@ -1,6 +1,5 @@
 import ISO6391, { LanguageCode } from "iso-639-1";
 import { Menu } from "@grammyjs/menu";
-
 import { Context } from "~/bot/types";
 import { usersService } from "~/services";
 import { locales } from "~/bot/helpers/i18n";

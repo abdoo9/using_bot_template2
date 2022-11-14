@@ -1,15 +1,15 @@
-start_command = 
-    .description = Botu başlat
-language_command = 
-    .description = Botun dilini değiştir
+# start_command = 
+#     .description = Botu başlat
+# language_command = 
+#     .description = Botun dilini değiştir
 
-welcome = hoşgeldin
-language = 
-    .select = Dil seç
-    .changed = Dil değiştirildi
+# welcome = hoşgeldin
+# language = 
+#     .select = Dil seç
+#     .changed = Dil değiştirildi
 
-token = 
-    .received = Token alındı
-## 
+# token = 
+#     .received = Token alındı
+# ## 
 
-node-fetch = node-fetch
+# node-fetch = node-fetch

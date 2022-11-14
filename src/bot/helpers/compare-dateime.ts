@@ -1,7 +1,6 @@
 // // this is because upsert does not return if the record was created or updated
-// export function compareDateime(
-//   date1: Date,
-//   date2: Date,
-// ) {
-//   return date1.getTime() === date2.getTime();
-// }
+// https://github.com/prisma/prisma/discussions/3432#discussioncomment-3099451
+
+export function isNewBot(updatedAt: Date, createdAt: Date): boolean {
+  return updatedAt.getTime() - createdAt.getTime() < 100;
+}
