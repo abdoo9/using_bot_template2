@@ -4,25 +4,26 @@ import type { PartialDeep } from "type-fest";
 
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.message, {
-    findByMessageIdAndSourceIdAndBotId: (
-      messageId: number,
+    findBySourceMessageIdAndSourceIdAndBotId: (
+      sourceMessageId: number,
       sourceId: number,
       botId: number,
-      args?: Prisma.MessageFindUniqueArgs
+      args?: Prisma.MessageFindManyArgs
     ) => {
       const query = {
         where: {
           sourceId,
-          messageId,
+          sourceMessageId,
           botId,
         },
       };
 
-      return prisma.message.findUnique(_.merge(query, args));
+      return prisma.message.findMany(_.merge(query, args));
     },
 
     createMessage: <T extends PartialDeep<Prisma.MessageCreateArgs>>(
-      messageId: number,
+      sourceMessageId: number,
+      destMessageId: number,
       sourceId: number,
       destId: number,
       botId: number,
@@ -31,7 +32,8 @@ export const createService = (prisma: PrismaClient) =>
     ) => {
       const query: Prisma.MessageCreateArgs = {
         data: {
-          messageId,
+          sourceMessageId,
+          destMessageId,
           sourceId,
           destId,
           botId,

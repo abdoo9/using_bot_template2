@@ -8,6 +8,35 @@ export const composer = new Composer<Context>();
 
 const feature = composer.chatType("private");
 
+feature.on(
+  "edited_message",
+  logHandle("handle edited_message"),
+  async (ctx) => {
+    await ctx.replyWithChatAction("typing");
+    const sourceMessageId = ctx.update.edited_message.message_id;
+    const sourceId = ctx.update.edited_message.chat.id;
+    const botId = ctx.me.id;
+    const message =
+      await messagesService.findBySourceMessageIdAndSourceIdAndBotId(
+        sourceMessageId,
+        sourceId,
+        botId,
+        {
+          where: {
+            sourceMessageId,
+            sourceId,
+            botId,
+          },
+        }
+      );
+    if (message.length === 1) {
+      const updatedMessage = ctx.copyMessage(message[0].destId.toString(), {
+        reply_to_message_id: message[0].destMessageId,
+      });
+    }
+  }
+);
+
 feature.on("message", logHandle("handle message"), async (ctx) => {
   const dest = await botsService.findByBotId(ctx.me.id, {
     select: {
@@ -27,11 +56,19 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
     await ctx.reply("something went wrong");
     throw new Error("fatal: Message not forwarded");
   } else {
-    const messageId = forwardedMessage.message_id;
+    const sourceMessageId = ctx.message.message_id;
+    const destMessageId = forwardedMessage.message_id;
     const sourceId = ctx.from.id;
     const destId = forwardedMessage.chat.id;
     const botId = ctx.me.id;
-    await messagesService.createMessage(messageId, sourceId, destId, botId, {});
+    await messagesService.createMessage(
+      sourceMessageId,
+      destMessageId,
+      sourceId,
+      destId,
+      botId,
+      {}
+    );
     const statusMessage = await ctx.reply("message forwarded");
     if (ctx.message?.forward_date) {
       ctx.api.sendMessage(
@@ -40,15 +77,10 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
           firstName: ctx.from?.first_name,
         }),
         {
-          reply_to_message_id: messageId,
+          reply_to_message_id: destMessageId,
         }
       );
     }
     setTimeout(() => statusMessage.delete(), 3000);
   }
-
-  // .then((message) => {
-  //
-
-  // });
 });

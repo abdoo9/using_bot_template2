@@ -48,21 +48,22 @@ model Bot {
 }
 
 model Message {
-  id            Int      @id @default(autoincrement()) @map("id")
-  messageId     Int      @map("message_id")
-  bot           Bot      @relation(fields: [botId], references: [botId])
-  botId         BigInt   @map("bot_id")
-  sourceId      BigInt   @map("source_id")
-  source        User     @relation(name: "UserSentMessage", fields: [sourceId], references: [userId])
-  destId        BigInt   @map("dest_id")
-  dest          User     @relation(name: "UserReceivedMessage", fields: [destId], references: [userId])
-  successor     Message? @relation("MessageEditHistory")
-  predecessorId Int?     @unique
-  predecessor   Message? @relation("MessageEditHistory", fields: [predecessorId], references: [id])
-  updatedAt     DateTime @updatedAt @map("updated_at")
-  createdAt     DateTime @default(now()) @map("created_at")
+  id              Int      @id @default(autoincrement()) @map("id")
+  sourceMessageId Int      @map("source_message_id")
+  destMessageId   Int      @map("dest_message_id")
+  bot             Bot      @relation(fields: [botId], references: [botId])
+  botId           BigInt   @map("bot_id")
+  sourceId        BigInt   @map("source_id")
+  source          User     @relation(name: "UserSentMessage", fields: [sourceId], references: [userId])
+  destId          BigInt   @map("dest_id")
+  dest            User     @relation(name: "UserReceivedMessage", fields: [destId], references: [userId])
+  // successor       Message? @relation("MessageEditHistory")
+  // predecessorId   Int?     @unique
+  // predecessor     Message? @relation("MessageEditHistory", fields: [predecessorId], references: [id])
+  updatedAt       DateTime @updatedAt @map("updated_at")
+  createdAt       DateTime @default(now()) @map("created_at")
 
-  @@unique([messageId, sourceId, botId], name: "message_id_source_id_bot_id_key")
+  @@unique([sourceMessageId, destMessageId, sourceId, botId], name: "source_dest_bot_pkey")
   @@map(name: "messages")
 }
 

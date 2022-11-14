@@ -18,9 +18,10 @@ CREATE TABLE "users" (
 CREATE TABLE "bots" (
     "bot_id" BIGINT NOT NULL,
     "token" TEXT NOT NULL,
-    "bot_info" JSONB NOT NULL,
     "owner_id" BIGINT NOT NULL,
     "group_id" BIGINT,
+    "first_name" TEXT NOT NULL DEFAULT 'bot',
+    "username" TEXT NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -29,14 +30,16 @@ CREATE TABLE "bots" (
 
 -- CreateTable
 CREATE TABLE "messages" (
-    "message_id" BIGINT NOT NULL,
+    "id" SERIAL NOT NULL,
+    "source_message_id" INTEGER NOT NULL,
+    "dest_message_id" INTEGER NOT NULL,
     "bot_id" BIGINT NOT NULL,
     "source_id" BIGINT NOT NULL,
     "dest_id" BIGINT NOT NULL,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "messages_pkey" PRIMARY KEY ("message_id")
+    CONSTRAINT "messages_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -51,10 +54,16 @@ CREATE TABLE "user_bots" (
 CREATE UNIQUE INDEX "bots_token_key" ON "bots"("token");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "messages_source_message_id_dest_message_id_source_id_bot_id_key" ON "messages"("source_message_id", "dest_message_id", "source_id", "bot_id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "user_bots_user_id_bot_id_key" ON "user_bots"("user_id", "bot_id");
 
 -- AddForeignKey
 ALTER TABLE "bots" ADD CONSTRAINT "bots_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "messages" ADD CONSTRAINT "messages_bot_id_fkey" FOREIGN KEY ("bot_id") REFERENCES "bots"("bot_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "messages" ADD CONSTRAINT "messages_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
