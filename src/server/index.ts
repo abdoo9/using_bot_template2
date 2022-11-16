@@ -26,7 +26,6 @@ server.setErrorHandler(async (error, request, response) => {
 server.post(`/:botToken`, async (req, res) => {
   const { botToken } = req.params as { botToken: string };
   const bot = getBot(botToken);
-
   return webhookCallback(bot, "fastify")(req, res);
 });
 

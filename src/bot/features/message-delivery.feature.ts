@@ -100,17 +100,16 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
         .catch((err) => {
           throw new Error(err);
         })
-        .then(() => {
-          messagesService.createMessage(
+        .then(async (msg) => {
+          await messagesService.createMessage(
             ctx.message.message_id,
-            replyToMessage[0].sourceMessageId,
+            msg.message_id,
             ctx.chat.id,
             Number(replyToMessage[0].sourceId),
             botId,
-            text || "",
+            text || " ",
             {}
           );
-          ctx.answerCallbackQuery(ctx.t(`message.sent`));
         });
     }
     return;

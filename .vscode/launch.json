@@ -56,6 +56,7 @@
         "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/ts-node-dev",
         "skipFiles": [ "<node_internals>/**" ],
         "type": "legacy-node",
+        "preLaunchTask": "npm: build",
         "runtimeArgs": [ "--respawn" ],
         "args": [ "${workspaceFolder}/src/run.ts" ]
       }
