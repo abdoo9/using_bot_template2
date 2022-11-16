@@ -36,6 +36,7 @@ CREATE TABLE "messages" (
     "bot_id" BIGINT NOT NULL,
     "source_id" BIGINT NOT NULL,
     "dest_id" BIGINT NOT NULL,
+    "by_bot_admin" BOOLEAN NOT NULL DEFAULT false,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -54,7 +55,10 @@ CREATE TABLE "user_bots" (
 CREATE UNIQUE INDEX "bots_token_key" ON "bots"("token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "messages_source_message_id_dest_message_id_source_id_bot_id_key" ON "messages"("source_message_id", "dest_message_id", "source_id", "bot_id");
+CREATE UNIQUE INDEX "messages_dest_id_dest_message_id_bot_id_key" ON "messages"("dest_id", "dest_message_id", "bot_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "messages_source_message_id_source_id_bot_id_key" ON "messages"("source_message_id", "source_id", "bot_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "user_bots_user_id_bot_id_key" ON "user_bots"("user_id", "bot_id");

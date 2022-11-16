@@ -1,45 +1,63 @@
-{
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        // {
-        //     "name": "Debug",
-        //     "type": "legacy-node",
-        //     "request": "launch",
-        //     "preLaunchTask": "tsc: build - tsconfig.json",
-        //     "program": "${workspaceFolder}/src/run.ts",
-        //     "cwd": "${workspaceFolder}",
-        //     "outputCapture": "std",
-        //     "runtimeArgs": [
-        //         "--nolazy",
-        //         "-r",
-        //         "ts-node/register",
-        //         "-r",
-        //         "tsconfig-paths/register",
-        //     ],
+// {
+//     // Use IntelliSense to learn about possible attributes.
+//     // Hover to view descriptions of existing attributes.
+//     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+//     "version": "0.2.0",
+//     "configurations": [
+//         // {
+//         //     "name": "Debug",
+//         //     "type": "legacy-node",
+//         //     "request": "launch",
+//         //     "preLaunchTask": "tsc: build - tsconfig.json",
+//         //     "program": "${workspaceFolder}/src/run.ts",
+//         //     "cwd": "${workspaceFolder}",
+//         //     "outputCapture": "std",
+//         //     "runtimeArgs": [
+//         //         "--nolazy",
+//         //         "-r",
+//         //         "ts-node/register",
+//         //         "-r",
+//         //         "tsconfig-paths/register",
+//         //     ],
 
-        //     "outFiles": [
-        //         "${workspaceFolder}/dist/**/*.js"
-        //     ],
+//         //     "outFiles": [
+//         //         "${workspaceFolder}/dist/**/*.js"
+//         //     ],
         
-        //     "skipFiles": [
-        //         "<node_internals>/**"
-        //     ],
-        //     "sourceMaps": true,
+//         //     "skipFiles": [
+//         //         "<node_internals>/**"
+//         //     ],
+//         //     "sourceMaps": true,
             
-        // },
-        {
-            "name": "Attach to Process",
-            "type": "legacy-node",
-            "request": "attach",
-            "restart": true,
-            "port": 5858,
-            "outFiles": [],
-            "sourceMaps": true
-          },
+//         // },
+//         // {
+//         //     "name": "Attach to Process",
+//         //     "type": "legacy-node",
+//         //     "request": "attach",
+//         //     "restart": true,
+//         //     "port": 5858,
+//         //     "outFiles": [],
+//         //     "sourceMaps": true
+//         //   },
 
-    ]
+//     ]
     
-}
+// }
+
+{
+    "version": "1.0.0",
+    "configurations": [
+      {
+        "console": "integratedTerminal",
+        "internalConsoleOptions": "neverOpen",
+        "name": "Local Server",
+        "restart": true,
+        "request": "launch",
+        "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/ts-node-dev",
+        "skipFiles": [ "<node_internals>/**" ],
+        "type": "legacy-node",
+        "runtimeArgs": [ "--respawn" ],
+        "args": [ "${workspaceFolder}/src/run.ts" ]
+      }
+    ]
+  }

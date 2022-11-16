@@ -30,9 +30,30 @@ feature.on(
         }
       );
     if (message.length === 1) {
-      const updatedMessage = ctx.copyMessage(message[0].destId.toString(), {
-        reply_to_message_id: message[0].destMessageId,
-      });
+      const editNotificationMessage = await ctx.copyMessage(
+        Number(message[0].destId),
+        {
+          reply_to_message_id: message[0].destMessageId,
+          reply_markup: {
+            inline_keyboard: [
+              [{ text: ctx.t(`message.edited`), callback_data: "edited" }],
+            ],
+          },
+        }
+      );
+      if (editNotificationMessage) {
+        const destMessageId = editNotificationMessage.message_id;
+        const { destId } = message[0];
+        await messagesService.createMessage(
+          sourceMessageId,
+          destMessageId,
+          sourceId,
+          Number(destId),
+          botId,
+          ctx.update.edited_message.text || "",
+          {}
+        );
+      }
     }
   }
 );
@@ -48,9 +69,55 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
     await ctx.reply("something went wrong");
     throw new Error("fatal: Bot not found");
   }
+  if (
+    ctx.from.id === (Number(dest.ownerId) || Number(dest.groupId)) &&
+    ctx.message.reply_to_message
+  ) {
+    const destMessageId = ctx.message.reply_to_message.message_id;
+    const destId = ctx.message.reply_to_message.chat.id;
+    const botId = ctx.me.id;
+    const replyToMessage =
+      await messagesService.findByDestMessageIdAndDestIdAndBotId(
+        destMessageId,
+        destId,
+        botId,
+        {
+          where: {
+            destMessageId,
+            destId,
+            botId,
+          },
+        }
+      );
+    if (replyToMessage.length === 1) {
+      const { sourceMessageId } = replyToMessage[0];
+      const { sourceId } = replyToMessage[0];
+      const { text } = ctx.message;
+      ctx
+        .copyMessage(Number(sourceId), {
+          reply_to_message_id: sourceMessageId,
+        })
+        .catch((err) => {
+          throw new Error(err);
+        })
+        .then(() => {
+          messagesService.createMessage(
+            ctx.message.message_id,
+            replyToMessage[0].sourceMessageId,
+            ctx.chat.id,
+            Number(replyToMessage[0].sourceId),
+            botId,
+            text || "",
+            {}
+          );
+          ctx.answerCallbackQuery(ctx.t(`message.sent`));
+        });
+    }
+    return;
+  }
 
   const forwardedMessage = await ctx.forwardMessage(
-    (dest.groupId ? dest.groupId : dest.ownerId).toString()
+    Number(dest.groupId ? dest.groupId : dest.ownerId)
   );
   if (!forwardedMessage) {
     await ctx.reply("something went wrong");
@@ -67,6 +134,7 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
       sourceId,
       destId,
       botId,
+      ctx.update.message.text || "",
       {}
     );
     const statusMessage = await ctx.reply("message forwarded");
@@ -84,3 +152,7 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
     setTimeout(() => statusMessage.delete(), 3000);
   }
 });
+
+// function sendMessageDeliveredNotificationMessage(ctx: Context, message: string) {
+
+// }

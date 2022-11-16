@@ -17,9 +17,15 @@ feature.hears(
     const token = ctx.match[0];
     const botId = parseInt(token.split(":")[0], 10);
     const bot = new Bot(token);
-    await bot.init().catch(() => {
-      return ctx.reply(ctx.t("token_received.invalid"));
-    });
+    await bot
+      .init()
+      .catch(() => {
+        return ctx.reply(ctx.t("token_received.invalid"));
+      })
+      .then(async () => {
+        await bot.api.deleteWebhook();
+        await bot.api.setWebhook(`${process.env.WEBHOOK_URL}/${token}`);
+      });
     const { first_name: firstName, username } = bot.botInfo;
 
     const newBot = await botsService.upsertByBotId(

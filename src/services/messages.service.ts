@@ -4,13 +4,15 @@ import type { PartialDeep } from "type-fest";
 
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.message, {
-    findBySourceMessageIdAndSourceIdAndBotId: (
+    findBySourceMessageIdAndSourceIdAndBotId: <
+      T extends PartialDeep<Prisma.MessageFindManyArgs>
+    >(
       sourceMessageId: number,
       sourceId: number,
       botId: number,
-      args?: Prisma.MessageFindManyArgs
+      args?: Prisma.SelectSubset<T, Prisma.MessageFindManyArgs>
     ) => {
-      const query = {
+      const query: Prisma.MessageFindManyArgs = {
         where: {
           sourceId,
           sourceMessageId,
@@ -20,6 +22,23 @@ export const createService = (prisma: PrismaClient) =>
 
       return prisma.message.findMany(_.merge(query, args));
     },
+    findByDestMessageIdAndDestIdAndBotId: <
+      T extends PartialDeep<Prisma.MessageFindManyArgs>
+    >(
+      destMessageId: number,
+      destId: number,
+      botId: number,
+      args?: Prisma.SelectSubset<T, Prisma.MessageFindManyArgs>
+    ) => {
+      const query: Prisma.MessageFindManyArgs = {
+        where: {
+          destId,
+          destMessageId,
+          botId,
+        },
+      };
+      return prisma.message.findMany(_.merge(query, args));
+    },
 
     createMessage: <T extends PartialDeep<Prisma.MessageCreateArgs>>(
       sourceMessageId: number,
@@ -27,17 +46,11 @@ export const createService = (prisma: PrismaClient) =>
       sourceId: number,
       destId: number,
       botId: number,
-
+      text: string,
       args: Prisma.SelectSubset<T, Prisma.MessageCreateArgs>
     ) => {
       const query: Prisma.MessageCreateArgs = {
-        data: {
-          sourceMessageId,
-          destMessageId,
-          sourceId,
-          destId,
-          botId,
-        },
+        data: { sourceMessageId, destMessageId, sourceId, destId, botId, text },
       };
 
       return prisma.message.create(_.merge(query, args));

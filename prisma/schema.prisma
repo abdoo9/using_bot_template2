@@ -22,7 +22,6 @@ model User {
   userBots          UserBot[]
   botsOwned         Bot[]     @relation("botsOwned")
   messagesSent      Message[] @relation("UserSentMessage")
-  messagesReceived  Message[] @relation("UserReceivedMessage")
   userIsDeactivated Boolean   @default(false) @map("user_is_deactivated")
   ChatNotFound      Boolean   @default(false) @map("chat_not_found")
   updatedAt         DateTime  @updatedAt @map("updated_at")
@@ -56,13 +55,11 @@ model Message {
   sourceId        BigInt   @map("source_id")
   source          User     @relation(name: "UserSentMessage", fields: [sourceId], references: [userId])
   destId          BigInt   @map("dest_id")
-  dest            User     @relation(name: "UserReceivedMessage", fields: [destId], references: [userId])
-  // successor       Message? @relation("MessageEditHistory")
-  // predecessorId   Int?     @unique
-  // predecessor     Message? @relation("MessageEditHistory", fields: [predecessorId], references: [id])
+  text            String   @default(" ") @map("text")
   updatedAt       DateTime @updatedAt @map("updated_at")
   createdAt       DateTime @default(now()) @map("created_at")
 
+  @@unique([destId, destMessageId, sourceId, botId], name: "dest_pkey")
   @@unique([sourceMessageId, destMessageId, sourceId, botId], name: "source_dest_bot_pkey")
   @@map(name: "messages")
 }
