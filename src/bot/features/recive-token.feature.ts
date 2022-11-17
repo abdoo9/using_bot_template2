@@ -9,7 +9,7 @@ export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
 
 feature.hears(
-  /\d{5,15}:[A-Za-z0-9-_]{30,40}/,
+  /\d{5,15}:[A-Za-z0-9-_]{30,40}/gm,
   logHandle("handle token"),
   async (ctx) => {
     ctx.replyWithChatAction("typing");

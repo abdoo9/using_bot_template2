@@ -16,32 +16,32 @@ enum Role {
 }
 
 model User {
-  userId            BigInt    @id @map("user_id")
-  languageCode      String?   @map("language_code")
-  role              Role      @default(USER)
-  userBots          UserBot[]
-  botsOwned         Bot[]     @relation("botsOwned")
-  messagesSent      Message[] @relation("UserSentMessage")
-  userIsDeactivated Boolean   @default(false) @map("user_is_deactivated")
-  ChatNotFound      Boolean   @default(false) @map("chat_not_found")
-  updatedAt         DateTime  @updatedAt @map("updated_at")
-  createdAt         DateTime  @default(now()) @map("created_at")
+  userId            BigInt         @id @map("user_id")
+  languageCode      String?        @map("language_code")
+  role              Role           @default(USER)
+  subscriptions     Subscription[]
+  botsOwned         Bot[]          @relation("botsOwned")
+  messagesSent      Message[]      @relation("UserSentMessage")
+  userIsDeactivated Boolean        @default(false) @map("user_is_deactivated")
+  ChatNotFound      Boolean        @default(false) @map("chat_not_found")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+  createdAt         DateTime       @default(now()) @map("created_at")
 
   @@map(name: "users")
 }
 
 model Bot {
-  botId     BigInt    @id @map("bot_id")
-  token     String    @unique
-  owner     User      @relation(name: "botsOwned", fields: [ownerId], references: [userId])
-  ownerId   BigInt    @map("owner_id")
-  botUsers  UserBot[]
-  messages  Message[]
-  groupId   BigInt?   @map("group_id")
-  firstName String    @default("bot") @map("first_name")
-  username  String    @map("username")
-  updatedAt DateTime  @updatedAt @map("updated_at")
-  createdAt DateTime  @default(now()) @map("created_at")
+  botId       BigInt         @id @map("bot_id")
+  token       String         @unique
+  owner       User           @relation(name: "botsOwned", fields: [ownerId], references: [userId])
+  ownerId     BigInt         @map("owner_id")
+  subscribers Subscription[]
+  messages    Message[]
+  groupId     BigInt?        @map("group_id")
+  firstName   String         @default("bot") @map("first_name")
+  username    String         @map("username")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
 
   @@map(name: "bots")
 }
@@ -64,14 +64,14 @@ model Message {
   @@map(name: "messages")
 }
 
-model UserBot {
+model Subscription {
   user         User    @relation(fields: [userId], references: [userId])
   userId       BigInt  @map("user_id")
   bot          Bot     @relation(fields: [botId], references: [botId])
   botId        BigInt  @map("bot_id")
   userIsBanned Boolean @default(false) @map("user_is_banned")
-  botIsBlocked Boolean @map("bot_is_blocked")
+  botIsBlocked Boolean @default(false) @map("bot_is_blocked")
 
-  @@unique([userId, botId], name: "user_bots_pkey")
-  @@map(name: "user_bots")
+  @@unique([userId, botId], name: "subscription_pkey")
+  @@map(name: "subscriptions")
 }

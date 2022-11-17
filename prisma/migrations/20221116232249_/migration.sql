@@ -36,7 +36,7 @@ CREATE TABLE "messages" (
     "bot_id" BIGINT NOT NULL,
     "source_id" BIGINT NOT NULL,
     "dest_id" BIGINT NOT NULL,
-    "by_bot_admin" BOOLEAN NOT NULL DEFAULT false,
+    "text" TEXT NOT NULL DEFAULT ' ',
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -44,24 +44,24 @@ CREATE TABLE "messages" (
 );
 
 -- CreateTable
-CREATE TABLE "user_bots" (
+CREATE TABLE "subscriptions" (
     "user_id" BIGINT NOT NULL,
     "bot_id" BIGINT NOT NULL,
     "user_is_banned" BOOLEAN NOT NULL DEFAULT false,
-    "bot_is_blocked" BOOLEAN NOT NULL
+    "bot_is_blocked" BOOLEAN NOT NULL DEFAULT false
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "bots_token_key" ON "bots"("token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "messages_dest_id_dest_message_id_bot_id_key" ON "messages"("dest_id", "dest_message_id", "bot_id");
+CREATE UNIQUE INDEX "messages_dest_id_dest_message_id_source_id_bot_id_key" ON "messages"("dest_id", "dest_message_id", "source_id", "bot_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "messages_source_message_id_source_id_bot_id_key" ON "messages"("source_message_id", "source_id", "bot_id");
+CREATE UNIQUE INDEX "messages_source_message_id_dest_message_id_source_id_bot_id_key" ON "messages"("source_message_id", "dest_message_id", "source_id", "bot_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "user_bots_user_id_bot_id_key" ON "user_bots"("user_id", "bot_id");
+CREATE UNIQUE INDEX "subscriptions_user_id_bot_id_key" ON "subscriptions"("user_id", "bot_id");
 
 -- AddForeignKey
 ALTER TABLE "bots" ADD CONSTRAINT "bots_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -73,10 +73,7 @@ ALTER TABLE "messages" ADD CONSTRAINT "messages_bot_id_fkey" FOREIGN KEY ("bot_i
 ALTER TABLE "messages" ADD CONSTRAINT "messages_source_id_fkey" FOREIGN KEY ("source_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "messages" ADD CONSTRAINT "messages_dest_id_fkey" FOREIGN KEY ("dest_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_bots" ADD CONSTRAINT "user_bots_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "user_bots" ADD CONSTRAINT "user_bots_bot_id_fkey" FOREIGN KEY ("bot_id") REFERENCES "bots"("bot_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_bot_id_fkey" FOREIGN KEY ("bot_id") REFERENCES "bots"("bot_id") ON DELETE RESTRICT ON UPDATE CASCADE;

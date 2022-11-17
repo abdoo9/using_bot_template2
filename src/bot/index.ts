@@ -3,7 +3,7 @@ import { limit as rateLimit } from "@grammyjs/ratelimiter";
 import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { hydrateReply, parseMode } from "@grammyjs/parse-mode";
 import { hydrate } from "@grammyjs/hydrate";
-
+import { ignoreOld } from "grammy-middlewares";
 import { Context } from "~/bot/types";
 import { config } from "~/config";
 
@@ -40,7 +40,6 @@ export function getBot(botToken: string): Bot<Context> {
     bot.api.config.use(apiCallsLogger);
     bot.use(updatesLogger());
   }
-
   bot.use(collectMetrics());
   bot.use(rateLimit());
   bot.use(hydrateReply);
@@ -50,6 +49,7 @@ export function getBot(botToken: string): Bot<Context> {
   bot.use(setupLogger());
   bot.use(setupI18n());
   bot.use(setUser());
+  bot.use(ignoreOld());
 
   // Handlers
 
