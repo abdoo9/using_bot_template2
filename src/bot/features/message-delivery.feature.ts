@@ -151,7 +151,3 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
     setTimeout(() => statusMessage.delete(), 3000);
   }
 });
-
-// function sendMessageDeliveredNotificationMessage(ctx: Context, message: string) {
-
-// }

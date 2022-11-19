@@ -48,7 +48,7 @@ export function getBot(botToken: string): Bot<Context> {
   bot.use(setupLocalContext());
   bot.use(setupLogger());
   bot.use(setupI18n());
-  bot.use(setUser());
+  bot.use(setUser(botToken));
   bot.use(ignoreOld());
 
   // Handlers
