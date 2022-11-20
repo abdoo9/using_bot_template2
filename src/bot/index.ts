@@ -27,9 +27,25 @@ import {
 } from "~/bot/features";
 import { isMultipleLocales } from "~/bot/helpers/i18n";
 import { handleError } from "~/bot/helpers/error-handler";
+import { botsService } from "~/services/index";
 
-export function getBot(botToken: string): Bot<Context> {
-  const bot = new Bot<Context>(botToken);
+export async function getBot(botToken: string): Promise<Bot<Context>> {
+  const dbBot = await botsService.findByBotId(Number(botToken.split(":")[0]));
+
+  // if the bot is in the DB, we can avoid an impliset call to the getMe API
+  const bot = dbBot
+    ? new Bot<Context>(botToken, {
+        botInfo: {
+          id: Number(dbBot.botId),
+          is_bot: true,
+          first_name: dbBot.firstName,
+          username: dbBot.username,
+          can_join_groups: true,
+          can_read_all_group_messages: true,
+          supports_inline_queries: true,
+        },
+      })
+    : new Bot<Context>(botToken);
 
   // Middlewares
 

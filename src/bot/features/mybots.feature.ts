@@ -22,6 +22,7 @@ feature.command("mybots", logHandle("handle /mybots"), async (ctx) => {
     (acc, bot) => `${acc}\n@${bot.username} ➖ I${bot.firstName}`,
     ""
   );
+  // TODO: fix this mess
   function myBotsKeyboard(botsArray: string | any[]): InlineKeyboard {
     let botsKeyboard = new InlineKeyboard();
     // eslint-disable-next-line no-plusplus
