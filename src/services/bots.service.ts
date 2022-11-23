@@ -84,4 +84,58 @@ export const createService = (prisma: PrismaClient) =>
       };
       return prisma.bot.findUnique(_.merge(query, args));
     },
+    banUser: <T extends PartialDeep<Prisma.BotUpdateArgs>>(
+      botId: number,
+      userId: number,
+      args: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>
+    ) => {
+      const query: Prisma.BotUpdateArgs = {
+        where: {
+          botId,
+        },
+        data: {
+          subscribers: {
+            update: {
+              where: {
+                subscription_pkey: {
+                  userId,
+                  botId,
+                },
+              },
+              data: {
+                userIsBanned: true,
+              },
+            },
+          },
+        },
+      };
+      return prisma.bot.update(_.merge(query, args));
+    },
+    unbanUser: <T extends PartialDeep<Prisma.BotUpdateArgs>>(
+      botId: number,
+      userId: number,
+      args: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>
+    ) => {
+      const query: Prisma.BotUpdateArgs = {
+        where: {
+          botId,
+        },
+        data: {
+          subscribers: {
+            update: {
+              where: {
+                subscription_pkey: {
+                  userId,
+                  botId,
+                },
+              },
+              data: {
+                userIsBanned: false,
+              },
+            },
+          },
+        },
+      };
+      return prisma.bot.update(_.merge(query, args));
+    },
   });
