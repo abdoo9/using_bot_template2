@@ -2,6 +2,7 @@ import _ from "lodash";
 import type { Prisma, PrismaClient } from "@prisma/client";
 import type { PartialDeep } from "type-fest";
 
+type BotWithSubscribers = Prisma.PromiseReturnType<typeof findByBotId>;
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.bot, {
     findByBotId: <T extends PartialDeep<Prisma.BotFindUniqueArgs>>(

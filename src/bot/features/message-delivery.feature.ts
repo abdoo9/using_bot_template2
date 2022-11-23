@@ -63,11 +63,19 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
     select: {
       ownerId: true,
       groupId: true,
+      subscribers: {
+        where: {
+          botId: ctx.me.id,
+          userId: ctx.from.id,
+        },
+      },
     },
   });
   if (!dest) {
     await ctx.reply("something went wrong");
     throw new Error("fatal: Bot not found");
+  }
+  if (dest.subscribers[0]?.userIsBanned) {
   }
   if (
     ctx.from.id === (Number(dest.ownerId) || Number(dest.groupId)) &&
