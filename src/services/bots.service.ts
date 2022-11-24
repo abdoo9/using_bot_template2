@@ -1,22 +1,22 @@
 import _ from "lodash";
-import type { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import type { PartialDeep } from "type-fest";
 
-type BotWithSubscribers = Prisma.PromiseReturnType<typeof findByBotId>;
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.bot, {
-    findByBotId: <T extends PartialDeep<Prisma.BotFindUniqueArgs>>(
+    // https://prisma.slack.com/archives/CA491RJH0/p1669228917525499?thread_ts=1669200271.315109&cid=CA491RJH0
+    findByBotId: <T extends Prisma.BotArgs>(
       botId: number,
-      args?: Prisma.SelectSubset<T, Prisma.BotFindUniqueArgs>
+      args?: Prisma.SelectSubset<T, Prisma.BotArgs>
     ) => {
-      const query: Prisma.BotFindUniqueArgs = {
+      const query = Prisma.validator<Prisma.BotFindUniqueArgsBase>()({
         where: {
           botId,
         },
-      };
-
-      return prisma.bot.findUnique(_.merge(query, args));
+      });
+      return prisma.bot.findUnique<T & typeof query>(_.merge(query, args));
     },
+
     findUserBots: <T extends PartialDeep<Prisma.BotFindManyArgs>>(
       ownerId: number,
       args?: Prisma.SelectSubset<T, Prisma.BotFindManyArgs>

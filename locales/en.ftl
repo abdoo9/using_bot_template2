@@ -25,4 +25,6 @@ message_delivery =
     .success = Message successfully sent!
     .failed = Message failed to send!
     .message_forwarded = Message forwarded by {$firstName}!
+    .you_are_banned = :( the bot owner have banned you from sending messages to him.
+    
     

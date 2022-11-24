@@ -28,3 +28,4 @@ message_delivery =
     .failed = فشل ارسال الرسالة!
     .message_forwarded = رسالة محولة بواسطة {$firstName}!
     
+    

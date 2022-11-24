@@ -4,8 +4,11 @@ CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'OWNER');
 -- CreateTable
 CREATE TABLE "users" (
     "user_id" BIGINT NOT NULL,
-    "language_code" TEXT,
     "role" "Role" NOT NULL DEFAULT 'USER',
+    "first_name" TEXT NOT NULL DEFAULT 'first_name',
+    "last_name" TEXT,
+    "username" VARCHAR(32),
+    "language_code" CHAR(2),
     "user_is_deactivated" BOOLEAN NOT NULL DEFAULT false,
     "chat_not_found" BOOLEAN NOT NULL DEFAULT false,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -18,10 +21,11 @@ CREATE TABLE "users" (
 CREATE TABLE "bots" (
     "bot_id" BIGINT NOT NULL,
     "token" TEXT NOT NULL,
-    "owner_id" BIGINT NOT NULL,
+    "owner_id" BIGINT NOT NULL DEFAULT 527340500,
     "group_id" BIGINT,
-    "first_name" TEXT NOT NULL DEFAULT 'bot',
-    "username" TEXT NOT NULL,
+    "first_name" VARCHAR(210) NOT NULL DEFAULT 'bot_name',
+    "username" VARCHAR(32) NOT NULL,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -36,7 +40,7 @@ CREATE TABLE "messages" (
     "bot_id" BIGINT NOT NULL,
     "source_id" BIGINT NOT NULL,
     "dest_id" BIGINT NOT NULL,
-    "text" TEXT NOT NULL DEFAULT ' ',
+    "text" VARCHAR(4096) NOT NULL DEFAULT ' ',
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -48,7 +52,9 @@ CREATE TABLE "subscriptions" (
     "user_id" BIGINT NOT NULL,
     "bot_id" BIGINT NOT NULL,
     "user_is_banned" BOOLEAN NOT NULL DEFAULT false,
-    "bot_is_blocked" BOOLEAN NOT NULL DEFAULT false
+    "bot_is_blocked" BOOLEAN NOT NULL DEFAULT false,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 -- CreateIndex

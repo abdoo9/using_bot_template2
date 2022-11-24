@@ -68,14 +68,37 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
           botId: ctx.me.id,
           userId: ctx.from.id,
         },
+        select: {
+          userIsBanned: true,
+        },
       },
     },
   });
+  // const dest = prisma.bot.findUnique({
+  //   where: {
+  //     botId: ctx.me.id,
+  //   },
+  //   select: {
+  //     ownerId: true,
+  //     groupId: true,
+  //     subscribers: {
+  //       where: {
+  //         botId: ctx.me.id,
+  //         userId: ctx.from.id,
+  //       },
+  //       select: {
+  //         userIsBanned: true,
+  //       },
+  //     },
+  //   },
+  // });
   if (!dest) {
     await ctx.reply("something went wrong");
     throw new Error("fatal: Bot not found");
   }
-  if (dest.subscribers[0]?.userIsBanned) {
+  if (dest.subscribers[0].userIsBanned) {
+    ctx.reply(ctx.t("message_delivery.you_are_banned"));
+    return;
   }
   if (
     ctx.from.id === (Number(dest.ownerId) || Number(dest.groupId)) &&
@@ -144,7 +167,7 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
       ctx.update.message.text || "",
       {}
     );
-    const statusMessage = await ctx.reply("message forwarded");
+    const statusMessage = await ctx.reply("message_delivery.success");
     if (ctx.message?.forward_date) {
       ctx.api.sendMessage(
         (dest.groupId ? dest.groupId : dest.ownerId).toString(),
