@@ -27,5 +27,16 @@ message_delivery =
     .success = تم ارسال الرسالة بنجاح!
     .failed = فشل ارسال الرسالة!
     .message_forwarded = رسالة محولة بواسطة {$firstName}!
+    .you_are_banned = :( صاحب هذا البوت قام بحظرك
     
+ban = 
+    .how_to_use = قم بالرد على رسالة الشخص الذي تريد حظره باستخدام هذا الامر
+    .user_banned_successfully = تم حظر المستخدم بنجاح
+    
+unban = 
+    .how_to_use =  قم بالرد على رسالة الشخص الذي تريد رفع الحظر عنه باستخدام هذا الامر
+    .user_unbanned_successfully = تم رفع الحظر عن المستخدم بنجاح
+
+unbanAll = 
+    .all_users_unbanned = { $count } مستخدم تم رفع الحظر عنهم!   
     
