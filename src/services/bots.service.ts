@@ -139,4 +139,35 @@ export const createService = (prisma: PrismaClient) =>
       };
       return prisma.bot.update(_.merge(query, args));
     },
+    // unbanAll: <T extends Prisma.BotArgs>(
+    //   botId: number,
+    //   args: Prisma.SelectSubset<T, Prisma.BotArgs>
+    // ) => {
+    //   const query = Prisma.validator<Prisma.BotUpdateManyArgs>()({
+    //     where: {
+    //       botId,
+    //       subscribers: {
+    //         some: {
+    //           userIsBanned: true,
+    //         },
+    //       },
+    //     },
+    //     data: {
+
+    //       // subscribers: {
+    //       //   update: {
+    //       //     where: {
+    //       //       subscription_pkey: {
+    //       //         botId,
+    //       //       },
+    //       //     },
+    //       //     data: {
+    //       //       userIsBanned: false,
+    //       //     },
+    //       //   },
+    //       // },
+    //     },
+    //   });
+    //   return prisma.bot.updateMany<T & typeof query>(_.merge(query, args));
+    // },
   });

@@ -6,3 +6,4 @@ export { composer as myBotsFeature } from "./mybots.feature";
 export { composer as messagedeliveryFeature } from "./message-delivery.feature";
 export { composer as banFeature } from "./ban.feature";
 export { composer as unbanFeature } from "./unban.feature";
+export { composer as unbanAllFeature } from "./unbanAll.feature";

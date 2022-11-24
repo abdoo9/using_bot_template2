@@ -2,7 +2,7 @@ import { Composer } from "grammy";
 
 import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
-import { botsService, messagesService } from "~/services/index";
+import { subscriptionsService } from "~/services/index";
 
 export const composer = new Composer<Context>();
 
@@ -17,19 +17,7 @@ feature.command(
 
     await ctx.replyWithChatAction("typing");
 
-    if (!ctx.message.reply_to_message) {
-      await ctx.reply(ctx.t("unban.how_to_use"));
-    } else {
-      const replyToMessage =
-        await messagesService.findByDestMessageIdAndDestIdAndBotId(
-          ctx.message.reply_to_message.message_id,
-          ctx.message.reply_to_message.chat.id,
-          ctx.me.id
-        );
-
-      const { sourceId } = replyToMessage[0];
-      await botsService.unbanUser(ctx.me.id, Number(sourceId), {});
-      await ctx.reply(ctx.t("unban.user_banned_successfully"));
-    }
+    const count = await subscriptionsService.unbanAll(ctx.me.id);
+    await ctx.reply(ctx.t("unbanAll.all_users_unbanned", count));
   }
 );

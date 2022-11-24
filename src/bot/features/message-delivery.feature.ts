@@ -167,7 +167,7 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
       ctx.update.message.text || "",
       {}
     );
-    const statusMessage = await ctx.reply("message_delivery.success");
+    const statusMessage = await ctx.reply(ctx.t("message_delivery.success"));
     if (ctx.message?.forward_date) {
       ctx.api.sendMessage(
         (dest.groupId ? dest.groupId : dest.ownerId).toString(),

@@ -27,4 +27,13 @@ message_delivery =
     .message_forwarded = Message forwarded by {$firstName}!
     .you_are_banned = :( the bot owner have banned you from sending messages to him.
     
+ban = 
+    .how_to_use = reply to the message of the user that you want to ban with this command
+    .user_banned_successfully = user have been banned successfully
     
+unban = 
+    .how_to_use = reply to the message of the user that you want to unban with this command
+    .user_unbanned_successfully = user have been unbanned successfully
+
+unbanAll = 
+    .all_users_unbanned = { $count } users have been unbanned!

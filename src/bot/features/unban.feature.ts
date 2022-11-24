@@ -26,6 +26,6 @@ feature.command("unban", logHandle("handle /unban"), async (ctx, next) => {
 
     const { sourceId } = replyToMessage[0];
     await botsService.unbanUser(ctx.me.id, Number(sourceId), {});
-    await ctx.reply(ctx.t("unban.user_banned_successfully"));
+    await ctx.reply(ctx.t("unban.user_unbanned_successfully"));
   }
 });

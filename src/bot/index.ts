@@ -26,6 +26,7 @@ import {
   welcomeFeature,
   banFeature,
   unbanFeature,
+  unbanAllFeature,
 } from "~/bot/features";
 import { isMultipleLocales } from "~/bot/helpers/i18n";
 import { handleError } from "~/bot/helpers/error-handler";
@@ -78,6 +79,7 @@ export async function getBot(botToken: string): Promise<Bot<Context>> {
   bot.use(myBotsFeature);
   bot.use(banFeature);
   bot.use(unbanFeature);
+  bot.use(unbanAllFeature);
 
   bot.use(messagedeliveryFeature);
   if (isMultipleLocales) {
