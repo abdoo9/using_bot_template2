@@ -4,24 +4,24 @@ import type { PartialDeep } from "type-fest";
 
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.user, {
-    findByTelegramId: <T extends PartialDeep<Prisma.UserFindUniqueArgs>>(
+    findByTelegramId: <T extends Prisma.UserArgs>(
       userId: number,
-      args?: Prisma.SelectSubset<T, Prisma.UserFindUniqueArgs>
+      select?: Prisma.SelectSubset<T, Prisma.UserArgs>
     ) => {
-      const query: Prisma.UserFindUniqueArgs = {
+      const query = {
         where: {
           userId,
         },
-      };
+      } satisfies Prisma.UserFindUniqueArgsBase;
 
-      return prisma.user.findUnique(_.merge(query, args));
+      return prisma.user.findUnique<T & typeof query>(_.merge(query, select));
     },
-
-    upsertByTelegramId: <T extends PartialDeep<Prisma.UserUpsertArgs>>(
+    upsertByTelegramId: <T extends Prisma.UserArgs>(
       userId: number,
-      args: Prisma.SelectSubset<T, Prisma.UserUpsertArgs>
+      args: PartialDeep<Pick<Prisma.UserUpsertArgs, "create" | "update">>,
+      select?: Prisma.SelectSubset<T, Prisma.UserArgs>
     ) => {
-      const query: Prisma.UserUpsertArgs = {
+      const query = {
         where: {
           userId,
         },
@@ -29,9 +29,9 @@ export const createService = (prisma: PrismaClient) =>
           userId,
         },
         update: {},
-      };
+      } satisfies Prisma.UserUpsertArgs;
 
-      return prisma.user.upsert(_.merge(query, args));
+      return prisma.user.upsert<T & typeof query>(_.merge(query, args, select));
     },
 
     upsertByUserIdAndBotId: <T extends PartialDeep<Prisma.UserUpsertArgs>>(
