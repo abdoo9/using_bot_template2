@@ -12,16 +12,24 @@ export const middleware =
       const role =
         ctx.from.id === config.BOT_ADMIN_USER_ID ? Role.OWNER : undefined;
       // upsert user
-      ctx.local.user = await usersService.upsertByTelegramId(telegramId, {
-        create: {
-          languageCode,
-          role,
+      ctx.local.user = await usersService.upsertByTelegramId(
+        telegramId,
+        {
+          create: {
+            languageCode,
+            role,
+          },
+          update: {
+            languageCode,
+            role,
+          },
         },
-        update: {
-          languageCode,
-          role,
-        },
-      });
+        {
+          select: {
+            botsOwned: true,
+          },
+        }
+      );
       // saving any bot that is not present in the database.
       // default admin is the bot maker owner
       const dbBot = await botsService.botExists(ctx.me.id);
