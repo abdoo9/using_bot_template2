@@ -25,7 +25,7 @@ export const middleware =
           },
         },
         {
-          select: {
+          include: {
             botsOwned: true,
           },
         }

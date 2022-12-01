@@ -4,7 +4,7 @@ import { Logger } from "pino";
 
 export interface LocalContext {
   bot?: Bot;
-  user?: User;
+  user?: User & { botsOwned: Bot[] };
   logger?: Logger;
 }
 

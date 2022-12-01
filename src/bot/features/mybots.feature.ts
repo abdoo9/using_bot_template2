@@ -21,24 +21,10 @@ feature.command("mybots", logHandle("handle /mybots"), async (ctx) => {
     },
   });
   const botsTable = bots.reduce(
-    (acc, bot) => `${acc}\n@${bot.username} ➖ I${bot.firstName}`,
+    (acc, bot) => `${acc}\n@${bot.username} ➖ ‎${bot.firstName}`,
     ""
   );
-  // TODO: fix this mess
-  // function myBotsKeyboard(botsArray: string | any[]): InlineKeyboard {
-  //   let botsKeyboard = new InlineKeyboard();
-  //   // eslint-disable-next-line no-plusplus
-  //   for (let i = 0; i < botsArray.length; i++) {
-  //     botsKeyboard = botsKeyboard.text(
-  //       `• @${botsArray[i].username} •`,
-  //       `info_${botsArray[i].botId}`
-  //     );
-  //     if (i % 2 === 0) {
-  //       botsKeyboard.row();
-  //     }
-  //   }
-  //   return botsKeyboard;
-  // }
+
   await ctx.reply(
     `${ctx.t("my_bots.bots_count", {
       botsCount: bots.length,

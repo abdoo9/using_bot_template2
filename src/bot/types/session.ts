@@ -1,4 +1,6 @@
+import { Bot } from "@prisma/client";
+
 export interface SessionData {
-  bots?: Array<unknown>;
+  botsOwned?: Array<Bot>;
   languageCode?: string;
 }
