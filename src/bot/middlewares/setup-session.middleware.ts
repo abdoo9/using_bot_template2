@@ -10,6 +10,6 @@ const storage = new RedisAdapter({
 
 export const middleware = (): Middleware<Context> =>
   session({
-    initial: () => ({}),
+    initial: () => ({ broadcastNotifyUsers: false }),
     storage,
   });

@@ -21,4 +21,16 @@ export const createService = (prisma: PrismaClient) =>
         _.merge(query, args)
       );
     },
+
+    botStats: <T extends Prisma.SubscriptionCountArgs>(
+      botId: number,
+      args?: Prisma.SelectSubset<T, Prisma.SubscriptionCountArgs>
+    ) => {
+      const query: Prisma.SubscriptionCountArgs = {
+        where: {
+          botId,
+        },
+      };
+      return prisma.bot.count(_.merge(query, args));
+    },
   });

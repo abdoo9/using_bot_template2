@@ -37,3 +37,17 @@ unban =
 
 unbanAll = 
     .all_users_unbanned = { $count } users have been unbanned!
+
+keyboard =
+    .stats = stats
+    .replies = replies
+    .back = 🔙back
+    .mainMenu = 🔝main menu
+
+
+broadcast_menu =
+    .broadcast = broadcast
+    .messageText = broadcast options
+    .send_to_all = send message to all users
+    .forward_to_all = forward message to all users
+    .notify_users = notify users

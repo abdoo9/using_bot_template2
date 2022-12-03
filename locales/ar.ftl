@@ -40,3 +40,15 @@ unban =
 unbanAll = 
     .all_users_unbanned = { $count } مستخدم تم رفع الحظر عنهم!   
     
+keyboard =
+    .stats = الاحصائيات
+    .replies = الردود
+    .back = رجوع🔙
+    .mainMenu = 🔝الرئيسية
+
+broadcast_menu =
+    .broadcast = الاذاعة
+    .messageText = خيارات الاذاعة
+    .send_to_all = send message to all users
+    .forward_to_all = forward message to all users
+    .notify_users = ارسال اشعار
