@@ -19,6 +19,7 @@
   "dependencies": {
     "@grammyjs/hydrate": "1.2.1",
     "@grammyjs/i18n": "1.0.1",
+    "@grammyjs/conversations": "1.1.0",
     "@grammyjs/menu": "1.1.2",
     "@grammyjs/parse-mode": "1.5.0",
     "@grammyjs/ratelimiter": "1.1.6",

@@ -16,6 +16,7 @@ import {
   setupI18n,
   collectMetrics,
   ignoreOld,
+  setupConversations,
 } from "~/bot/middlewares";
 import { apiCallsLogger } from "~/bot/transformers";
 import {
@@ -69,6 +70,7 @@ export async function getBot(botToken: string): Promise<Bot<Context>> {
   bot.use(setupLogger());
   bot.use(setupI18n());
   bot.use(setUser(botToken));
+  bot.use(setupConversations());
   bot.use(ignoreOld());
 
   // Handlers

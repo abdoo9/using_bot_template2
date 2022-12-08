@@ -39,17 +39,6 @@ myBotsMenu.chooseIntoSubmenu(
   }
 );
 
-// broadcastOptionsMenu.chooseIntoSubmenu(
-//   "broadcast",
-//   (ctx) => {
-//     return {
-//       s2a: ctx.t(`keyboard.broadcast.send-to-all`),
-//       f2a: ctx.t(`keyboard.broadcast.forward-to-all`),
-//     };
-//   },
-//   botMenu
-// );
-
 // bot menu start
 botMenu.interact((ctx) => ctx.t("keyboard.stats"), "stats", {
   do: async (ctx) => {

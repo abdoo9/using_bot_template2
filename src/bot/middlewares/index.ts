@@ -6,3 +6,4 @@ export { middleware as setupLogger } from "./setup-logger.middleware";
 export { middleware as setupSession } from "./setup-session.middleware";
 export { middleware as updatesLogger } from "./updates-logger.middleware";
 export { middleware as ignoreOld } from "./ignore-old.middleware";
+export { middleware as setupConversations } from "./setup-conversations.middleware";
