@@ -7,3 +7,4 @@ export { composer as messagedeliveryFeature } from "./message-delivery.feature";
 export { composer as banFeature } from "./ban.feature";
 export { composer as unbanFeature } from "./unban.feature";
 export { composer as unbanAllFeature } from "./unbanAll.feature";
+export { composer as setReply } from "./set-reply.feature";

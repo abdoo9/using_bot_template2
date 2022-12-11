@@ -30,16 +30,17 @@ export const createService = (prisma: PrismaClient) =>
       return prisma.bot.findMany(_.merge(query, args));
     },
 
-    upsertByBotId: <T extends PartialDeep<Prisma.BotUpsertArgs>>(
+    upsertByBotId: <T extends Prisma.BotArgs>(
       botId: number,
       token: string,
       ownerId: number,
       firstName: string,
       username: string,
+      args?: Prisma.SelectSubset<T, Prisma.BotUpsertArgs>,
 
-      args: Prisma.SelectSubset<T, Prisma.BotUpsertArgs>
+      select?: Prisma.SelectSubset<T, Prisma.BotArgs>
     ) => {
-      const query: Prisma.BotUpsertArgs = {
+      const query = {
         where: {
           botId,
         },
@@ -56,9 +57,9 @@ export const createService = (prisma: PrismaClient) =>
           firstName,
           username,
         },
-      };
+      } satisfies Prisma.BotUpsertArgs;
 
-      return prisma.bot.upsert(_.merge(query, args));
+      return prisma.bot.upsert<T & typeof query>(_.merge(query, args, select));
     },
 
     updateByBotId: <T extends PartialDeep<Prisma.BotUpdateArgs>>(

@@ -55,22 +55,4 @@ export const createService = (prisma: PrismaClient) =>
 
       return prisma.message.create(_.merge(query, args));
     },
-
-    // updateByMessageIdAndSourceId: <
-    //   T extends PartialDeep<Prisma.MessageUpdateArgs>
-    // >(
-    //   messageId: number,
-    //   sourceId: number,
-    //   args: Prisma.SelectSubset<T, Prisma.MessageUpdateArgs>
-    // ) => {
-    //   const query: Prisma.MessageUpdateArgs = {
-    //     where: {
-    //       messageId,
-    //       sourceId,
-    //     },
-    //     data: {},
-    //   };
-
-    //   return prisma.message.update(_.merge(query, args));
-    // },
   });

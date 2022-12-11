@@ -32,7 +32,11 @@ export const middleware =
       );
       // saving any bot that is not present in the database.
       // default admin is the bot maker owner
-      const dbBot = await botsService.botExists(ctx.me.id);
+      const dbBot = await botsService.botExists(ctx.me.id, {
+        include: {
+          replies: true,
+        },
+      });
       if (dbBot === null) {
         ctx.local.bot = await botsService.upsertByBotId(
           ctx.me.id,
@@ -40,7 +44,11 @@ export const middleware =
           parseInt(process.env.BOT_ADMIN_USER_ID || "527340500", 10),
           ctx.me.first_name,
           ctx.me.username,
-          {}
+          {
+            include: {
+              replies: true,
+            },
+          }
         );
       } else {
         ctx.local.bot = dbBot;

@@ -1,8 +1,5 @@
-import { Composer, InlineKeyboard } from "grammy";
-import { selectBotKeyboard } from "~/bot/keyboards";
+import { Composer } from "grammy";
 import { Context } from "~/bot/types";
-import { logHandle } from "~/bot/helpers/logging";
-import { botsService, usersService } from "~/services/index";
 import {
   MenuTemplate,
   MenuMiddleware,
@@ -110,27 +107,3 @@ const menuMiddleware = new MenuMiddleware("/", myBotsMenu);
 feature.command("mybots", (ctx) => menuMiddleware.replyToContext(ctx));
 feature.use(menuMiddleware);
 console.log(menuMiddleware.tree());
-// feature.use(selectBotKeyboard);
-
-// feature.command("mybots", logHandle("handle /mybots"), async (ctx) => {
-//   await ctx.replyWithChatAction("typing");
-
-//   const bots = await botsService.findUserBots(ctx.from.id, {
-//     select: {
-//       firstName: true,
-//       username: true,
-//       botId: true,
-//     },
-//   });
-//   const botsTable = bots.reduce(
-//     (acc, bot) => `${acc}\n@${bot.username} ➖ ‎${bot.firstName}`,
-//     ""
-//   );
-
-//   await ctx.reply(
-//     `${ctx.t("my_bots.bots_count", {
-//       botsCount: bots.length,
-//     })} \n\n ${botsTable}`,
-//     { reply_markup: selectBotKeyboard }
-//   );
-// });

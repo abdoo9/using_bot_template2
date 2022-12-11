@@ -1,7 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  // previewFeatures = ["interactiveTransactions"]
-  // binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -46,7 +44,7 @@ model Bot {
   ownerId     BigInt         @default(527340500) @map("owner_id")
   subscribers Subscription[]
   messages    Message[]
-  Replies     Reply[]
+  replies     Reply[]
   groupId     BigInt?        @map("group_id")
   firstName   String         @default("bot_name") @map("first_name") @db.VarChar(210) //longest name for a bot in nashrabot db is 206
   username    String         @map("username") @db.VarChar(32)
@@ -91,12 +89,11 @@ model Subscription {
 }
 
 model Reply {
-  id        Int     @id @default(autoincrement()) @map("id")
-  trigger   String  @map("trigger")
-  bot       Bot     @relation(fields: [botId], references: [botId])
-  botId     BigInt  @map("bot_id")
-  text      String  @map("text")
-  parseMode String? @map("parse_mode")
+  trigger   String @map("trigger")
+  bot       Bot    @relation(fields: [botId], references: [botId])
+  botId     BigInt @map("bot_id")
+  messageId Int    @map("message_id")
+  chatId    BigInt @map("chat_id")
 
   @@unique([trigger, botId], name: "reply_pkey")
   @@map(name: "replies")
