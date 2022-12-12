@@ -1,12 +1,14 @@
 // https://grammy.dev/plugins/hydrate.html for the delete after 5 seconds feature
-import { Composer } from "grammy";
+import { Composer, matchFilter } from "grammy";
 import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
 import { botsService, messagesService } from "~/services/index";
 
 export const composer = new Composer<Context>();
 
-const feature = composer.chatType("private");
+const feature = composer
+  .chatType("private")
+  .drop(matchFilter("message:pinned_message"));
 
 feature.on(
   "edited_message",
@@ -96,7 +98,7 @@ feature.on("message", logHandle("handle message"), async (ctx) => {
     await ctx.reply("something went wrong");
     throw new Error("fatal: Bot not found");
   }
-  if (dest.subscribers[0].userIsBanned) {
+  if (dest.subscribers[0]?.userIsBanned) {
     ctx.reply(ctx.t("message_delivery.you_are_banned"));
     return;
   }

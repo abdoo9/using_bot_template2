@@ -17,26 +17,31 @@ feature.filter(
       false
     );
   },
-  async (ctx) => {
+  async (ctx, next) => {
     const replyMessageInfo = ctx.local.bot?.replies.filter(
       (r) => r.trigger === ctx.update.message?.text
     )[0];
     const reply = replyMessageInfo
-      ? await ctx.api.copyMessage(
+      ? ctx.api.copyMessage(
           ctx.chat.id,
           Number(replyMessageInfo?.chatId),
           replyMessageInfo?.messageId
         )
-      : await ctx.reply(
-          ctx.t("something_went_wrong.reply_message_not_fonud_in_db")
-        );
-    console.log(reply);
+      : ctx.reply(ctx.t("something_went_wrong.reply_message_not_fonud_in_db"));
+    reply.catch((err) => {
+      if (
+        err.message ===
+        "Call to 'copyMessage' failed! (400: Bad Request: message to copy not found)"
+      ) {
+        next();
+      }
+    });
   }
 );
 
-feature.command("start", logHandle("handle /start"), async (ctx) => {
+feature.hears("/start", logHandle("handle /start"), async (ctx) => {
   await ctx.replyWithChatAction("typing");
-  await ctx.conversation.enter("greeting");
+  await ctx.reply("hello");
 });
 
 // feature.on("message:text", async (ctx) => {

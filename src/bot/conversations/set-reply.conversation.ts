@@ -11,8 +11,13 @@ export const setReply = async (
 ) => {
   await ctx.reply(ctx.t("set_reply.send_trigger"));
   ctx = await conversation.waitFor("message:text");
-  const trigger = ctx.message?.text;
-  await ctx.reply(ctx.t("set_reply.send_context"));
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const trigger = ctx.message!.text;
+  if (trigger === "/set_reply" || !trigger) {
+    ctx.reply(ctx.t("set_reply.err_set_reply_cant_be_used_as_trigger"));
+    return;
+  }
+  await ctx.reply(ctx.t("set_reply.send_context", { trigger }));
   ctx = await conversation.waitFor("message");
   const { message } = ctx;
 
@@ -20,7 +25,8 @@ export const setReply = async (
     await repliesService
       .upsertReply(ctx.me.id, trigger, message.message_id, message.chat.id, {})
       .then((reply) => {
-        ctx.reply(ctx.t("set_reply.success"));
-      });
+        ctx.reply(ctx.t("set_reply.success", { trigger }));
+      })
+      .then(() => ctx.pinChatMessage(message.message_id));
   }
 };

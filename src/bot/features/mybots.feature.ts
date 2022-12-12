@@ -8,6 +8,12 @@ import {
 
 export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
+// TODO:make botmaker only capable of doing this
+// .filter(
+//   (ctx) =>
+//     ctx.local.bot?.type === "USER_OWNED_MAKER" ||
+//     ctx.local.bot?.type === "OWNER_OWNED_MAKER"
+// );
 
 const myBotsMenu = new MenuTemplate<Context>(
   (ctx) => `Hey ${ctx.from?.first_name}!`
@@ -52,7 +58,15 @@ botMenu.submenu(
     joinLastRow: true,
   }
 );
-
+botMenu.url(
+  (ctx) => ctx.t("keyboard.set_reply"),
+  (ctx) =>
+    `https://t.me/${
+      ctx.local.user?.botsOwned.filter(
+        (bot) => ctx.match && bot.botId.toString() === ctx.match[1]
+      )[0].username
+    }?start=set_reply`
+);
 botMenu.manualRow(
   createBackMainMenuButtons(
     (ctx) => ctx.t(`keyboard.back`),

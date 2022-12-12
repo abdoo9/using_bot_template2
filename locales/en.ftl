@@ -51,3 +51,10 @@ broadcast_menu =
     .send_to_all = send message to all users
     .forward_to_all = forward message to all users
     .notify_users = notify users
+
+set_reply=
+    .send_trigger = please send the text that the user will send to trigger the reply 
+                    for example: /start or hello
+    .err_set_reply_cant_be_used_as_trigge = /set_reply can be used as trigger
+    .send_context = please send the reply message that you want the user to see when he send ( { $trigger } )
+    .success = reply for ( { $trigger } ) has been set successfully!

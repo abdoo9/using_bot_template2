@@ -11,3 +11,12 @@ feature.command("set_reply", logHandle("handle /set_reply"), async (ctx) => {
   await ctx.replyWithChatAction("typing");
   await ctx.conversation.enter("setReply");
 });
+
+feature.hears(
+  /\/start set_reply/,
+  logHandle("handle /start set_reply"),
+  async (ctx) => {
+    await ctx.replyWithChatAction("typing");
+    await ctx.conversation.enter("setReply");
+  }
+);

@@ -52,3 +52,11 @@ broadcast_menu =
     .send_to_all = ارسال لجميع المشتركين
     .forward_to_all = توجيه لجميع المشتركين
     .notify_users = ارسال اشعار
+
+set_reply=
+    .send_trigger = ارسل النص الذي تريد انشاء رد تلقائي له
+                    مثال: السلام عليكم
+    .err_set_reply_cant_be_used_as_trigge = /set_reply لا يمكن وضعها ك رد
+    .send_context = الان ارسل الرد عندما يكتب الشخص ( { $trigger } )
+                    يمكن ان يكون الرد نص او صورة او فيديو . . . الخ
+    .success = تم انشاء الرد على ( { $trigger } ) بنجاح!
