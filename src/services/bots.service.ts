@@ -140,4 +140,22 @@ export const createService = (prisma: PrismaClient) =>
       };
       return prisma.bot.update(_.merge(query, args));
     },
+
+    updateGroupId: <T extends Prisma.BotArgs>(
+      botId: number,
+      groupId: number,
+      args?: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>,
+      select?: Prisma.SelectSubset<T, Prisma.BotArgs>
+    ) => {
+      const query = {
+        where: {
+          botId,
+        },
+        data: {
+          groupId,
+        },
+      } satisfies Prisma.BotUpdateArgs;
+
+      return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
+    },
   });

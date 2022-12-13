@@ -58,3 +58,6 @@ set_reply=
     .err_set_reply_cant_be_used_as_trigge = /set_reply can be used as trigger
     .send_context = please send the reply message that you want the user to see when he send ( { $trigger } )
     .success = reply for ( { $trigger } ) has been set successfully!
+
+set_group=
+    .group_set_successfully = { $title } have been set successfully from now on I'll forward all messages to here.
