@@ -70,4 +70,4 @@ set_reply=
     .success = تم انشاء الرد على ( { $trigger } ) بنجاح!
 
 set_group=
-    .group_set_successfully = { $title } have been set successfully from now on I'll forward all messages to here.
+    .group_set_successfully = { $title } تم تعيين المجموعة كـ مجموعة ادارة للبوت لرفع اكثر من ادمن في البوت قم باضافة الادمن الجديد الى هذه المجموعة وسيتمكن من الرد على الرسائل.
