@@ -30,6 +30,9 @@ my_bots =
       [10] لديك عشر بوتات.
       *[other] لدبك {$botsCount} بوت.
     }
+    
+message =
+    .edited = message edited
 
 message_delivery = 
     .success = تم ارسال الرسالة بنجاح!

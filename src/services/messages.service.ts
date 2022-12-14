@@ -46,11 +46,20 @@ export const createService = (prisma: PrismaClient) =>
       sourceId: number,
       destId: number,
       botId: number,
-      text: string,
-      args: Prisma.SelectSubset<T, Prisma.MessageCreateArgs>
+      text?: string,
+      groupId?: number,
+      args?: Prisma.SelectSubset<T, Prisma.MessageCreateArgs>
     ) => {
       const query: Prisma.MessageCreateArgs = {
-        data: { sourceMessageId, destMessageId, sourceId, destId, botId, text },
+        data: {
+          sourceMessageId,
+          destMessageId,
+          sourceId,
+          destId,
+          botId,
+          groupId,
+          text,
+        },
       };
 
       return prisma.message.create(_.merge(query, args));

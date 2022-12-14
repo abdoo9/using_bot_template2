@@ -52,8 +52,7 @@ feature.on(
           sourceId,
           Number(destId),
           botId,
-          ctx.update.edited_message.text || "",
-          {}
+          ctx.update.edited_message.text
         );
       }
     }
@@ -78,24 +77,7 @@ feature
         },
       },
     });
-    // const dest = prisma.bot.findUnique({
-    //   where: {
-    //     botId: ctx.me.id,
-    //   },
-    //   select: {
-    //     ownerId: true,
-    //     groupId: true,
-    //     subscribers: {
-    //       where: {
-    //         botId: ctx.me.id,
-    //         userId: ctx.from.id,
-    //       },
-    //       select: {
-    //         userIsBanned: true,
-    //       },
-    //     },
-    //   },
-    // });
+
     if (!dest) {
       await ctx.reply("something went wrong");
       throw new Error("fatal: Bot not found");
@@ -127,6 +109,7 @@ feature
       if (replyToMessage.length === 1) {
         const { sourceMessageId } = replyToMessage[0];
         const { sourceId } = replyToMessage[0];
+        const { groupId } = replyToMessage[0];
         const { text } = ctx.message;
         ctx
           .copyMessage(Number(sourceId), {
@@ -142,8 +125,8 @@ feature
               ctx.chat.id,
               Number(replyToMessage[0].sourceId),
               botId,
-              text || " ",
-              {}
+              text,
+              Number(groupId)
             );
           });
       }
@@ -168,8 +151,7 @@ feature
         sourceId,
         destId,
         botId,
-        ctx.update.message.text || "",
-        {}
+        ctx.update.message.text
       );
       const statusMessage = await ctx.reply(ctx.t("message_delivery.success"));
       if (ctx.message?.forward_date) {
@@ -231,11 +213,11 @@ feature
             await messagesService.createMessage(
               ctx.message.message_id,
               msg.message_id,
-              ctx.chat.id,
+              ctx.message.from.id,
               Number(replyToMessage[0].sourceId),
               botId,
-              text || " ",
-              {}
+              text,
+              ctx.chat.id
             );
           });
       }

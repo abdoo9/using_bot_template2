@@ -19,6 +19,13 @@ enum BotType {
   REGULAR
 }
 
+enum ChatType {
+  private
+  group
+  supergroup
+  channel
+}
+
 model User {
   userId            BigInt         @id @map("user_id")
   role              Role           @default(USER)
@@ -65,12 +72,11 @@ model Message {
   sourceId        BigInt   @map("source_id")
   source          User     @relation(name: "UserSentMessage", fields: [sourceId], references: [userId])
   destId          BigInt   @map("dest_id")
-  text            String   @default(" ") @map("text") @db.VarChar(4096)
+  groupId         BigInt?  @map("group_id")
+  text            String?  @map("text") @db.VarChar(4096)
   updatedAt       DateTime @updatedAt @map("updated_at")
   createdAt       DateTime @default(now()) @map("created_at")
 
-  @@unique([destId, destMessageId, sourceId, botId], name: "dest_pkey")
-  @@unique([sourceMessageId, destMessageId, sourceId, botId], name: "source_dest_bot_pkey")
   @@map(name: "messages")
 }
 

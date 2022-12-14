@@ -21,6 +21,9 @@ my_bots =
       *[other] you have {$botsCount} bots.
     }
 
+message =
+    .edited = message edited
+    
 message_delivery = 
     .success = Message successfully sent!
     .failed = Message failed to send!
