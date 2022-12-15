@@ -13,7 +13,7 @@ feature
     /^\/unbanall(@[a-zA-Z][\w_]{0,39}bot)?$/i,
     logHandle("handle /unbanAll"),
     async (ctx) => {
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
 
       const count = await subscriptionsService.unbanAll(ctx.me.id);
       await ctx.reply(ctx.t("unbanAll.all_users_unbanned", count));
@@ -24,7 +24,7 @@ feature.command(
   "unbanAll",
   logHandle("handle /unbanAll sent by not owner"),
   async (ctx) => {
-    await ctx.replyWithChatAction("typing");
+    ctx.replyWithChatAction("typing");
     await ctx.reply(ctx.t("unbanAll.can_be_used_by_owner_only"));
   }
 );

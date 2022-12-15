@@ -93,7 +93,7 @@ featureForOwner.command("admin", logHandle("handle /admin"), async (ctx) => {
 });
 
 feature.command("stats", logHandle("handle /stats"), async (ctx) => {
-  await ctx.replyWithChatAction("typing");
+  ctx.replyWithChatAction("typing");
 
   const usersCount = await usersService.count();
 
@@ -106,7 +106,7 @@ feature.command(
   "setcommands",
   logHandle("handle /setcommands"),
   async (ctx) => {
-    await ctx.replyWithChatAction("typing");
+    ctx.replyWithChatAction("typing");
 
     // set private chat commands
     await ctx.api.setMyCommands(

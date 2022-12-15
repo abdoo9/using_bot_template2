@@ -18,7 +18,7 @@ feature
       const groupId = Number(ctx.local.bot?.groupId);
       if (groupId !== ctx.chat.id) return next();
 
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
 
       const replyToMessage =
         await messagesService.findByDestMessageIdAndDestIdAndBotId(
@@ -47,7 +47,7 @@ feature
     ["ban", "b"],
     logHandle("handle /ban reply command in owner private"),
     async (ctx) => {
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
 
       const replyToMessage =
         await messagesService.findByDestMessageIdAndDestIdAndBotId(
@@ -72,7 +72,7 @@ feature
     "ban",
     logHandle("handle /ban command send without reply_to_message"),
     async (ctx) => {
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
       await ctx.reply(ctx.t("ban.how_to_use"));
     }
   );

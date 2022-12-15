@@ -11,7 +11,7 @@ const feature = composer.chatType("private");
 feature.use(selectLanguageKeyboard);
 
 feature.command("language", logHandle("handle /language"), async (ctx) => {
-  await ctx.replyWithChatAction("typing");
+  ctx.replyWithChatAction("typing");
   await ctx.reply(ctx.t("language.select"), {
     reply_markup: selectLanguageKeyboard,
   });

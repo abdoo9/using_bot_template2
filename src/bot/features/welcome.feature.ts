@@ -40,10 +40,10 @@ feature.filter(
 );
 
 feature.hears("/start", logHandle("handle /start"), async (ctx) => {
-  await ctx.replyWithChatAction("typing");
+  ctx.replyWithChatAction("typing");
   await ctx.reply("hello");
 });
 
 // feature.on("message:text", async (ctx) => {
-//   await ctx.replyWithChatAction("typing");
+//   ctx.replyWithChatAction("typing");
 // });

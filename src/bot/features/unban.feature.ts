@@ -18,7 +18,7 @@ feature
       const groupId = Number(ctx.local.bot?.groupId);
       if (groupId !== ctx.chat.id) return next();
 
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
 
       const replyToMessage =
         await messagesService.findByDestMessageIdAndDestIdAndBotId(
@@ -48,7 +48,7 @@ feature
     ["unban", "uban", "ub"],
     logHandle("handle /unban reply command in owner private"),
     async (ctx) => {
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
 
       const replyToMessage =
         await messagesService.findByDestMessageIdAndDestIdAndBotId(
@@ -79,7 +79,7 @@ feature
     ["unban", "uban", "ub"],
     logHandle("handle /unban command send without reply_to_message"),
     async (ctx) => {
-      await ctx.replyWithChatAction("typing");
+      ctx.replyWithChatAction("typing");
       await ctx.reply(ctx.t("unban.how_to_use"));
     }
   );

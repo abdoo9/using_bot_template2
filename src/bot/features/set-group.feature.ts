@@ -13,7 +13,7 @@ const feature = composer.filter(
 feature
   .chatType(["group", "supergroup"])
   .command(["set_group", "sg"], logHandle("handle /set_group"), async (ctx) => {
-    await ctx.replyWithChatAction("typing");
+    ctx.replyWithChatAction("typing");
     await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
     await ctx.reply(
       ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })

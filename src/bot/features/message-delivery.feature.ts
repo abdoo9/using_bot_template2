@@ -14,7 +14,7 @@ feature.on(
   "edited_message",
   logHandle("handle edited_message"),
   async (ctx) => {
-    await ctx.replyWithChatAction("typing");
+    ctx.replyWithChatAction("typing");
     const sourceMessageId = ctx.update.edited_message.message_id;
     const sourceId = ctx.update.edited_message.chat.id;
     const botId = ctx.me.id;
