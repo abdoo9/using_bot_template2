@@ -10,7 +10,7 @@ const feature = composer;
 feature
   .filter((ctx) => ctx.from?.id === Number(ctx.local.bot?.ownerId))
   .hears(
-    /^\/unbanall@([a-zA-Z][\w_]{0,39}bot)$/i,
+    /^\/unbanall(@[a-zA-Z][\w_]{0,39}bot)?$/i,
     logHandle("handle /unbanAll"),
     async (ctx) => {
       await ctx.replyWithChatAction("typing");

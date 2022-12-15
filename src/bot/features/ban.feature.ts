@@ -12,7 +12,7 @@ feature
   .chatType(["group", "supergroup"])
   .filter((ctx) => !!ctx.message?.reply_to_message)
   .command(
-    "ban",
+    ["ban", "b"],
     logHandle("handle /ban reply command in adminsgroup"),
     async (ctx, next) => {
       const groupId = Number(ctx.local.bot?.groupId);
@@ -28,6 +28,7 @@ feature
           ctx.message!.reply_to_message!.chat.id,
           ctx.me.id
         );
+      if (!replyToMessage[0]) return ctx.reply(ctx.t(`ban.message_not_found`));
 
       const { sourceId } = replyToMessage[0];
       await botsService.banUser(ctx.me.id, Number(sourceId), {});
@@ -43,7 +44,7 @@ feature
       ctx.from?.id === Number(ctx.local.bot?.ownerId)
   )
   .command(
-    "ban",
+    ["ban", "b"],
     logHandle("handle /ban reply command in owner private"),
     async (ctx) => {
       await ctx.replyWithChatAction("typing");
@@ -56,6 +57,7 @@ feature
           ctx.message!.reply_to_message!.chat.id,
           ctx.me.id
         );
+      if (!replyToMessage[0]) return ctx.reply(ctx.t(`ban.message_not_found`));
 
       const { sourceId } = replyToMessage[0];
       await botsService.banUser(ctx.me.id, Number(sourceId), {});
