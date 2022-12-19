@@ -50,19 +50,24 @@ unban =
 
 unbanAll = 
     .all_users_unbanned = { $count } مستخدم تم رفع الحظر عنهم!   
-    
-keyboard =
+
+bot_menu =
+    .broadcast = الاذاعة
     .stats = الاحصائيات
     .replies = الردود
     .back = رجوع🔙
     .mainMenu = 🔝الرئيسية
 
 broadcast_menu =
-    .broadcast = الاذاعة
     .messageText = خيارات الاذاعة
     .send_to_all = ارسال لجميع المشتركين
     .forward_to_all = توجيه لجميع المشتركين
     .notify_users = ارسال اشعار
+
+replies =
+    .messageText = replies explained
+    .set_reply = add new reply
+
 
 set_reply=
     .send_trigger = ارسل النص الذي تريد انشاء رد تلقائي له
@@ -74,3 +79,12 @@ set_reply=
 
 set_group=
     .group_set_successfully = { $title } تم تعيين المجموعة كـ مجموعة ادارة للبوت لرفع اكثر من ادمن في البوت قم باضافة الادمن الجديد الى هذه المجموعة وسيتمكن من الرد على الرسائل.
+    .how_to_set = how to set group
+    .how_to_set_url = https://t.me/+bJSfGztNJiU4NWU5
+    .how_to_change = how to chage group
+    .how_to_change_url = https://t.me/+bJSfGztNJiU4NWU5
+    .delete = delete
+    .confirm_delete_messageText = confirm delete!
+    .confirm_delete_group_yes = yes
+    .confirm_delete_group_no = No!
+    .group_deleted_successfully_menu = the group have been deleted successfully

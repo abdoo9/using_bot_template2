@@ -31,6 +31,7 @@ model User {
   role              Role           @default(USER)
   subscriptions     Subscription[]
   botsOwned         Bot[]          @relation("botsOwned")
+  ChatsOwned        Chat[]         @relation("chatsOwned")
   messagesSent      Message[]      @relation("UserSentMessage")
   firstName         String         @default("first_name") @map("first_name")
   lastName          String?        @map("last_name")
@@ -44,6 +45,18 @@ model User {
   @@map(name: "users")
 }
 
+model Chat {
+  chatId   BigInt   @id @map("chat_id")
+  title    String?  @map("title")
+  username String?  @map("username") @db.VarChar(32)
+  owner    User?    @relation("chatsOwned", fields: [ownerId], references: [userId])
+  ownerId  BigInt?  @map("owner_id")
+  type     ChatType @map("type")
+  Bots     Bot[]
+
+  @@map(name: "chats")
+}
+
 model Bot {
   botId       BigInt         @id @map("bot_id")
   token       String         @unique
@@ -52,6 +65,7 @@ model Bot {
   subscribers Subscription[]
   messages    Message[]
   replies     Reply[]
+  adminsGroup Chat?          @relation(fields: [groupId], references: [chatId])
   groupId     BigInt?        @map("group_id")
   firstName   String         @default("bot_name") @map("first_name") @db.VarChar(210) //longest name for a bot in nashrabot db is 206
   username    String         @map("username") @db.VarChar(32)

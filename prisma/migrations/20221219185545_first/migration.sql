@@ -1,6 +1,12 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'ADMIN', 'OWNER');
 
+-- CreateEnum
+CREATE TYPE "BotType" AS ENUM ('OWNER_OWNED_MAKER', 'USER_OWNED_MAKER', 'REGULAR');
+
+-- CreateEnum
+CREATE TYPE "ChatType" AS ENUM ('private', 'group', 'supergroup', 'channel');
+
 -- CreateTable
 CREATE TABLE "users" (
     "user_id" BIGINT NOT NULL,
@@ -18,6 +24,17 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
+CREATE TABLE "chats" (
+    "chat_id" BIGINT NOT NULL,
+    "title" TEXT,
+    "username" VARCHAR(32),
+    "owner_id" BIGINT,
+    "type" "ChatType" NOT NULL,
+
+    CONSTRAINT "chats_pkey" PRIMARY KEY ("chat_id")
+);
+
+-- CreateTable
 CREATE TABLE "bots" (
     "bot_id" BIGINT NOT NULL,
     "token" TEXT NOT NULL,
@@ -26,6 +43,7 @@ CREATE TABLE "bots" (
     "first_name" VARCHAR(210) NOT NULL DEFAULT 'bot_name',
     "username" VARCHAR(32) NOT NULL,
     "active" BOOLEAN NOT NULL DEFAULT true,
+    "type" "BotType" NOT NULL DEFAULT 'REGULAR',
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -40,7 +58,8 @@ CREATE TABLE "messages" (
     "bot_id" BIGINT NOT NULL,
     "source_id" BIGINT NOT NULL,
     "dest_id" BIGINT NOT NULL,
-    "text" VARCHAR(4096) NOT NULL DEFAULT ' ',
+    "group_id" BIGINT,
+    "text" VARCHAR(4096),
     "updated_at" TIMESTAMP(3) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -57,20 +76,31 @@ CREATE TABLE "subscriptions" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- CreateTable
+CREATE TABLE "replies" (
+    "trigger" TEXT NOT NULL,
+    "bot_id" BIGINT NOT NULL,
+    "message_id" INTEGER NOT NULL,
+    "chat_id" BIGINT NOT NULL
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "bots_token_key" ON "bots"("token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "messages_dest_id_dest_message_id_source_id_bot_id_key" ON "messages"("dest_id", "dest_message_id", "source_id", "bot_id");
-
--- CreateIndex
-CREATE UNIQUE INDEX "messages_source_message_id_dest_message_id_source_id_bot_id_key" ON "messages"("source_message_id", "dest_message_id", "source_id", "bot_id");
-
--- CreateIndex
 CREATE UNIQUE INDEX "subscriptions_user_id_bot_id_key" ON "subscriptions"("user_id", "bot_id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "replies_trigger_bot_id_key" ON "replies"("trigger", "bot_id");
+
+-- AddForeignKey
+ALTER TABLE "chats" ADD CONSTRAINT "chats_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "bots" ADD CONSTRAINT "bots_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "users"("user_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "bots" ADD CONSTRAINT "bots_group_id_fkey" FOREIGN KEY ("group_id") REFERENCES "chats"("chat_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "messages" ADD CONSTRAINT "messages_bot_id_fkey" FOREIGN KEY ("bot_id") REFERENCES "bots"("bot_id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -83,3 +113,6 @@ ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_user_id_fkey" FOREIGN 
 
 -- AddForeignKey
 ALTER TABLE "subscriptions" ADD CONSTRAINT "subscriptions_bot_id_fkey" FOREIGN KEY ("bot_id") REFERENCES "bots"("bot_id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "replies" ADD CONSTRAINT "replies_bot_id_fkey" FOREIGN KEY ("bot_id") REFERENCES "bots"("bot_id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -41,19 +41,24 @@ unban =
 unbanAll = 
     .all_users_unbanned = { $count } users have been unbanned!
 
-keyboard =
+bot_menu =
+    .broadcast = broadcast
     .stats = stats
     .replies = replies
+    .group_settings = group settings
+    .delete_bot = delete bot
     .back = 🔙back
     .mainMenu = 🔝main menu
 
-
 broadcast_menu =
-    .broadcast = broadcast
     .messageText = broadcast options
     .send_to_all = send message to all users
     .forward_to_all = forward message to all users
     .notify_users = notify users
+
+replies =
+    .messageText = replies explained
+    .set_reply = add new reply
 
 set_reply=
     .send_trigger = please send the text that the user will send to trigger the reply 
@@ -64,3 +69,12 @@ set_reply=
 
 set_group=
     .group_set_successfully = { $title } have been set successfully from now on I'll forward all messages to here.
+    .how_to_set = how to set group
+    .how_to_set_url = https://t.me/+bJSfGztNJiU4NWU5
+    .how_to_change = how to chage group
+    .how_to_change_url = https://t.me/+bJSfGztNJiU4NWU5
+    .delete = delete
+    .confirm_delete_messageText = confirm delete!
+    .confirm_delete_group_yes = yes
+    .confirm_delete_group_no = No!
+    .group_deleted_successfully_menu = the group have been deleted successfully, from now on I'll forward messages to your private chat

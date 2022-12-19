@@ -5,6 +5,7 @@ import {
   MenuMiddleware,
   createBackMainMenuButtons,
 } from "grammy-inline-menu";
+import { botsService } from "~/services/index";
 
 export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
@@ -27,6 +28,22 @@ const broadcastOptionsMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`broadcast_menu.messageText`)
 );
 
+const groupSettingsMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`group_menu.messageText`)
+);
+
+const confirmDeleteGroupMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`set_group.confirm_delete_messageText`)
+);
+
+const groupDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`set_group.group_deleted_successfully_menu`)
+);
+
+const repliesMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`replies.messageText`)
+);
+
 myBotsMenu.chooseIntoSubmenu(
   "bot",
   async (ctx) => {
@@ -43,7 +60,7 @@ myBotsMenu.chooseIntoSubmenu(
 );
 
 // bot menu start
-botMenu.interact((ctx) => ctx.t("keyboard.stats"), "stats", {
+botMenu.interact((ctx) => ctx.t("bot_menu.stats"), "stats", {
   do: async (ctx) => {
     await ctx.answerCallbackQuery("not implemented yet");
     return false;
@@ -51,15 +68,40 @@ botMenu.interact((ctx) => ctx.t("keyboard.stats"), "stats", {
 });
 
 botMenu.submenu(
-  (ctx) => ctx.t("broadcast_menu.broadcast"),
+  (ctx) => ctx.t("bot_menu.broadcast"),
   "broadcast",
   broadcastOptionsMenu,
   {
     joinLastRow: true,
   }
 );
-botMenu.url(
-  (ctx) => ctx.t("keyboard.set_reply"),
+
+botMenu.submenu(
+  (ctx) => ctx.t("bot_menu.group_settings"),
+  "group",
+  groupSettingsMenu
+);
+
+botMenu.submenu((ctx) => ctx.t(`bot_menu.replies`), "replies", repliesMenu);
+
+botMenu.interact((ctx) => ctx.t("bot_menu.delete_bot"), "delete", {
+  do: async (ctx) => {
+    await ctx.answerCallbackQuery("not implemented yet");
+    return false;
+  },
+});
+
+botMenu.manualRow(
+  createBackMainMenuButtons(
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
+  )
+);
+// bot menu end
+
+// repliesMenu start
+repliesMenu.url(
+  (ctx) => ctx.t("replies.set_reply"),
   (ctx) =>
     `https://t.me/${
       ctx.local.user?.botsOwned.filter(
@@ -67,13 +109,14 @@ botMenu.url(
       )[0].username
     }?start=set_reply`
 );
-botMenu.manualRow(
+
+repliesMenu.manualRow(
   createBackMainMenuButtons(
-    (ctx) => ctx.t(`keyboard.back`),
-    (ctx) => ctx.t(`keyboard.mainMenu`)
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
   )
 );
-// bot menu end
+// replies menu end
 
 // broadcast options menu start
 broadcastOptionsMenu.interact(
@@ -111,11 +154,80 @@ broadcastOptionsMenu.toggle(
 );
 broadcastOptionsMenu.manualRow(
   createBackMainMenuButtons(
-    (ctx) => ctx.t(`keyboard.back`),
-    (ctx) => ctx.t(`keyboard.mainMenu`)
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
   )
 );
 // // broadcast options menu end
+
+// group Settings menu  start
+
+groupSettingsMenu.url(
+  (ctx) => ctx.t(`set_group.how_to_set`),
+  (ctx) => ctx.t(`set_group.how_to_set_url`)
+);
+
+groupSettingsMenu.url(
+  (ctx) => ctx.t(`set_group.how_to_change`),
+  (ctx) => ctx.t(`set_group.how_to_change_url`),
+  {
+    joinLastRow: true,
+  }
+);
+
+groupSettingsMenu.submenu(
+  (ctx) => ctx.t(`set_group.delete`),
+  "delete",
+  confirmDeleteGroupMenu
+);
+
+groupSettingsMenu.manualRow(
+  createBackMainMenuButtons(
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
+  )
+);
+// group Settings menu end
+
+// confirm delete group menu start
+
+confirmDeleteGroupMenu.submenu(
+  (ctx) => ctx.t(`set_group.confirm_delete_group_yes`),
+  "yes",
+  groupDeletedSuccessfullyMenu,
+  {
+    hide: (ctx) => {
+      botsService.updateGroupId(Number(ctx.match?.[1]), null);
+      return false;
+    },
+  }
+);
+
+confirmDeleteGroupMenu.interact(
+  (ctx) => ctx.t(`set_group.confirm_delete_group_no`),
+  "no",
+  {
+    do: async (ctx) => {
+      await ctx.answerCallbackQuery("not implemented yet");
+      return "..";
+    },
+  }
+);
+// confirm delete group menu end
+
+// confirmDeleteGroupMenu start
+
+groupDeletedSuccessfullyMenu.interact(
+  (ctx) => ctx.t(`bot_menu.mainMenu`),
+  "back",
+  {
+    do: () => {
+      return "/";
+    },
+  }
+);
+
+// confirmDeleteGroupMenu end
 
 const menuMiddleware = new MenuMiddleware("/", myBotsMenu);
 feature.command("mybots", (ctx) => menuMiddleware.replyToContext(ctx));

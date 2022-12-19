@@ -143,7 +143,7 @@ export const createService = (prisma: PrismaClient) =>
 
     updateGroupId: <T extends Prisma.BotArgs>(
       botId: number,
-      groupId: number,
+      groupId: number | null,
       args?: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>,
       select?: Prisma.SelectSubset<T, Prisma.BotArgs>
     ) => {
