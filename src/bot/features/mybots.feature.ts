@@ -29,15 +29,23 @@ const broadcastOptionsMenu = new MenuTemplate<Context>((ctx) =>
 );
 
 const groupSettingsMenu = new MenuTemplate<Context>((ctx) =>
-  ctx.t(`group_menu.messageText`)
+  ctx.t(`set_group.messageText`)
 );
 
 const confirmDeleteGroupMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`set_group.confirm_delete_messageText`)
 );
 
+const confirmDeleteBotMenu = new MenuTemplate<Context>((ctx) =>
+ctx.t(`delete_bot.confirm_delete_messageText`)
+);
+
 const groupDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
-  ctx.t(`set_group.group_deleted_successfully_menu`)
+  ctx.t(`set_group.group_deleted_successfully_messageText`)
+);
+
+const botDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
+ctx.t(`delete_bot.bot_deleted_successfully_messageText`)
 );
 
 const repliesMenu = new MenuTemplate<Context>((ctx) =>
@@ -84,12 +92,7 @@ botMenu.submenu(
 
 botMenu.submenu((ctx) => ctx.t(`bot_menu.replies`), "replies", repliesMenu);
 
-botMenu.interact((ctx) => ctx.t("bot_menu.delete_bot"), "delete", {
-  do: async (ctx) => {
-    await ctx.answerCallbackQuery("not implemented yet");
-    return false;
-  },
-});
+botMenu.submenu((ctx) => ctx.t("bot_menu.delete_bot"), "delete",confirmDeleteBotMenu);
 
 botMenu.manualRow(
   createBackMainMenuButtons(
@@ -192,15 +195,9 @@ groupSettingsMenu.manualRow(
 // confirm delete group menu start
 
 confirmDeleteGroupMenu.submenu(
-  (ctx) => ctx.t(`set_group.confirm_delete_group_yes`),
+ (ctx) => ctx.t(`set_group.confirm_delete_group_yes`),
   "yes",
   groupDeletedSuccessfullyMenu,
-  {
-    hide: (ctx) => {
-      botsService.updateGroupId(Number(ctx.match?.[1]), null);
-      return false;
-    },
-  }
 );
 
 confirmDeleteGroupMenu.interact(
@@ -215,10 +212,12 @@ confirmDeleteGroupMenu.interact(
 );
 // confirm delete group menu end
 
-// confirmDeleteGroupMenu start
+// groupDeletedSuccessfullyMenu start
 
 groupDeletedSuccessfullyMenu.interact(
-  (ctx) => ctx.t(`bot_menu.mainMenu`),
+  async (ctx) => {
+    await botsService.updateGroupId(Number(ctx.match?.[1]), null);
+    return ctx.t(`bot_menu.mainMenu`)},
   "back",
   {
     do: () => {
@@ -227,7 +226,41 @@ groupDeletedSuccessfullyMenu.interact(
   }
 );
 
-// confirmDeleteGroupMenu end
+// groupDeletedSuccessfullyMenu end
+
+// botDeletedSuccessfullyMenu start 
+
+botDeletedSuccessfullyMenu.interact(
+  async (ctx) => {
+    await botsService.makeBotNotActive(Number(ctx.match?.[1]))
+    return ctx.t(`bot_menu.mainMenu`)},
+  "back",
+  {
+    do: () => {
+      return "/";
+    },
+  }
+);
+//// botDeletedSuccessfullyMenu end
+
+confirmDeleteBotMenu.submenu(
+  (ctx) => {
+    return ctx.t(`delete_bot.confirm_delete_bot_yes`)
+  },
+  "yes",
+  botDeletedSuccessfullyMenu
+);
+
+confirmDeleteBotMenu.interact(
+  (ctx) => ctx.t(`delete_bot.confirm_delete_bot_no`),
+  "no",
+  {
+    do: async (ctx) => {
+      await ctx.answerCallbackQuery("not implemented yet");
+      return "..";
+    },
+  }
+);
 
 const menuMiddleware = new MenuMiddleware("/", myBotsMenu);
 feature.command("mybots", (ctx) => menuMiddleware.replyToContext(ctx));

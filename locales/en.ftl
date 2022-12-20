@@ -68,6 +68,7 @@ set_reply=
     .success = reply for ( { $trigger } ) has been set successfully!
 
 set_group=
+    .messageText = here you can change the settings of the admins group
     .group_set_successfully = { $title } have been set successfully from now on I'll forward all messages to here.
     .how_to_set = how to set group
     .how_to_set_url = https://t.me/+bJSfGztNJiU4NWU5
@@ -77,4 +78,10 @@ set_group=
     .confirm_delete_messageText = confirm delete!
     .confirm_delete_group_yes = yes
     .confirm_delete_group_no = No!
-    .group_deleted_successfully_menu = the group have been deleted successfully, from now on I'll forward messages to your private chat
+    .group_deleted_successfully_messageText = the group have been deleted successfully, from now on I'll forward messages to your private chat
+
+delete_bot =
+    .confirm_delete_messageText = are you sure about deleting this bot!
+    .confirm_delete_bot_no = NO!
+    .confirm_delete_bot_yes = yes
+    .bot_deleted_successfully_messageText = the bot have been deleted successfully.

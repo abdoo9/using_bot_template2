@@ -158,4 +158,23 @@ export const createService = (prisma: PrismaClient) =>
 
       return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
     },
+
+    makeBotNotActive: <T extends Prisma.BotArgs>(
+      botId: number,
+      args?: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>,
+      select?: Prisma.SelectSubset<T, Prisma.BotArgs>
+    ) => {
+      const query = {
+        where: {
+          botId,
+        },
+        data: {
+          active: {
+            set: false
+          }
+        },
+      } satisfies Prisma.BotUpdateArgs;
+
+      return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
+    },
   });

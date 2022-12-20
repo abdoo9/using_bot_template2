@@ -32,7 +32,7 @@ my_bots =
     }
     
 message =
-    .edited = message edited
+    .edited = تم تعديل الرسالة
 
 message_delivery = 
     .success = تم ارسال الرسالة بنجاح!
