@@ -170,8 +170,8 @@ export const createService = (prisma: PrismaClient) =>
         },
         data: {
           active: {
-            set: false
-          }
+            set: false,
+          },
         },
       } satisfies Prisma.BotUpdateArgs;
 

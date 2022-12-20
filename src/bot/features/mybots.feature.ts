@@ -37,7 +37,7 @@ const confirmDeleteGroupMenu = new MenuTemplate<Context>((ctx) =>
 );
 
 const confirmDeleteBotMenu = new MenuTemplate<Context>((ctx) =>
-ctx.t(`delete_bot.confirm_delete_messageText`)
+  ctx.t(`delete_bot.confirm_delete_messageText`)
 );
 
 const groupDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
@@ -45,7 +45,7 @@ const groupDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
 );
 
 const botDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
-ctx.t(`delete_bot.bot_deleted_successfully_messageText`)
+  ctx.t(`delete_bot.bot_deleted_successfully_messageText`)
 );
 
 const repliesMenu = new MenuTemplate<Context>((ctx) =>
@@ -92,7 +92,11 @@ botMenu.submenu(
 
 botMenu.submenu((ctx) => ctx.t(`bot_menu.replies`), "replies", repliesMenu);
 
-botMenu.submenu((ctx) => ctx.t("bot_menu.delete_bot"), "delete",confirmDeleteBotMenu);
+botMenu.submenu(
+  (ctx) => ctx.t("bot_menu.delete_bot"),
+  "delete",
+  confirmDeleteBotMenu
+);
 
 botMenu.manualRow(
   createBackMainMenuButtons(
@@ -195,9 +199,9 @@ groupSettingsMenu.manualRow(
 // confirm delete group menu start
 
 confirmDeleteGroupMenu.submenu(
- (ctx) => ctx.t(`set_group.confirm_delete_group_yes`),
+  (ctx) => ctx.t(`set_group.confirm_delete_group_yes`),
   "yes",
-  groupDeletedSuccessfullyMenu,
+  groupDeletedSuccessfullyMenu
 );
 
 confirmDeleteGroupMenu.interact(
@@ -217,7 +221,8 @@ confirmDeleteGroupMenu.interact(
 groupDeletedSuccessfullyMenu.interact(
   async (ctx) => {
     await botsService.updateGroupId(Number(ctx.match?.[1]), null);
-    return ctx.t(`bot_menu.mainMenu`)},
+    return ctx.t(`bot_menu.mainMenu`);
+  },
   "back",
   {
     do: () => {
@@ -228,12 +233,13 @@ groupDeletedSuccessfullyMenu.interact(
 
 // groupDeletedSuccessfullyMenu end
 
-// botDeletedSuccessfullyMenu start 
+// botDeletedSuccessfullyMenu start
 
 botDeletedSuccessfullyMenu.interact(
   async (ctx) => {
-    await botsService.makeBotNotActive(Number(ctx.match?.[1]))
-    return ctx.t(`bot_menu.mainMenu`)},
+    await botsService.makeBotNotActive(Number(ctx.match?.[1]));
+    return ctx.t(`bot_menu.mainMenu`);
+  },
   "back",
   {
     do: () => {
@@ -241,11 +247,11 @@ botDeletedSuccessfullyMenu.interact(
     },
   }
 );
-//// botDeletedSuccessfullyMenu end
+// botDeletedSuccessfullyMenu end
 
 confirmDeleteBotMenu.submenu(
   (ctx) => {
-    return ctx.t(`delete_bot.confirm_delete_bot_yes`)
+    return ctx.t(`delete_bot.confirm_delete_bot_yes`);
   },
   "yes",
   botDeletedSuccessfullyMenu
@@ -265,4 +271,5 @@ confirmDeleteBotMenu.interact(
 const menuMiddleware = new MenuMiddleware("/", myBotsMenu);
 feature.command("mybots", (ctx) => menuMiddleware.replyToContext(ctx));
 feature.use(menuMiddleware);
+// eslint-disable-next-line no-console
 console.log(menuMiddleware.tree());

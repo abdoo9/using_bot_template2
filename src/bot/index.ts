@@ -3,7 +3,7 @@ import { limit as rateLimit } from "@grammyjs/ratelimiter";
 import { apiThrottler } from "@grammyjs/transformer-throttler";
 import { hydrateReply, parseMode } from "@grammyjs/parse-mode";
 import { hydrate } from "@grammyjs/hydrate";
-//import { ignoreOld } from "grammy-middlewares";
+// import { ignoreOld } from "grammy-middlewares";
 import { Context } from "~/bot/types";
 import { config } from "~/config";
 
