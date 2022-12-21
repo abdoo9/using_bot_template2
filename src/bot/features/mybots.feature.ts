@@ -6,6 +6,7 @@ import {
   createBackMainMenuButtons,
 } from "grammy-inline-menu";
 import { botsService } from "~/services/index";
+import { context } from "../context";
 
 export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
@@ -16,8 +17,18 @@ const feature = composer.chatType("private");
 //     ctx.local.bot?.type === "OWNER_OWNED_MAKER"
 // );
 
-const myBotsMenu = new MenuTemplate<Context>(
+const startMenu = new MenuTemplate<Context>(
   (ctx) => `Hey ${ctx.from?.first_name}!`
+);
+
+const addBotMenu = new MenuTemplate<Context>(
+  (ctx) => `Hey ${ctx.from?.first_name}!`
+);
+
+const myBotsMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`my_bots.bots_count`, {
+    botsCount: ctx.local.user?.botsOwned.length || 0,
+  })
 );
 
 const botMenu = new MenuTemplate<Context>(
@@ -51,7 +62,16 @@ const botDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
 const repliesMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`replies.messageText`)
 );
+// start menu start
+startMenu.submenu((ctx) => ctx.t(`start_menu.add_bot`), "addbot", addBotMenu);
 
+startMenu.submenu((ctx) => ctx.t(`start_menu.my_bots`), "mybots", myBotsMenu, {
+  joinLastRow: true,
+});
+
+// start menu end
+
+// my botsMenu start
 myBotsMenu.chooseIntoSubmenu(
   "bot",
   async (ctx) => {
@@ -66,6 +86,11 @@ myBotsMenu.chooseIntoSubmenu(
     columns: 2,
   }
 );
+
+myBotsMenu.submenu((ctx) => ctx.t(`start_menu.add_bot`), "addbot", addBotMenu, {
+  hide: (ctx) => ctx.local.user?.botsOwned.length !== 0,
+});
+// mybotsmenu end
 
 // bot menu start
 botMenu.interact((ctx) => ctx.t("bot_menu.stats"), "stats", {
@@ -268,8 +293,8 @@ confirmDeleteBotMenu.interact(
   }
 );
 
-const menuMiddleware = new MenuMiddleware("/", myBotsMenu);
-feature.command("mybots", (ctx) => menuMiddleware.replyToContext(ctx));
+const menuMiddleware = new MenuMiddleware("/", startMenu);
+feature.command("start", (ctx) => menuMiddleware.replyToContext(ctx));
 feature.use(menuMiddleware);
 // eslint-disable-next-line no-console
 console.log(menuMiddleware.tree());

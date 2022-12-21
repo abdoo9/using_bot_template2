@@ -39,10 +39,10 @@ feature.filter(
   }
 );
 
-feature.hears("/start", logHandle("handle /start"), async (ctx) => {
-  ctx.replyWithChatAction("typing");
-  await ctx.reply("hello");
-});
+// feature.hears("/start", logHandle("handle /start"), async (ctx) => {
+//   ctx.replyWithChatAction("typing");
+//   await ctx.reply("hello");
+// });
 
 // feature.on("message:text", async (ctx) => {
 //   ctx.replyWithChatAction("typing");

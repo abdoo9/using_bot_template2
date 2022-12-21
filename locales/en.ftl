@@ -9,7 +9,7 @@ language =
     .changed = Language successfully changed!
 
 token_received = 
-    .new_bot = New bot added your bot {$firstName} which is @{$username}!
+    .new_bot = New bot added, your bot {$firstName} which is @{$username}!
     .updated_bot = Bot updated your bot {$firstName} which is @{$username}!
     .invalid = Invalid token
 
