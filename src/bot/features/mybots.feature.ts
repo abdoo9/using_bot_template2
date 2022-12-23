@@ -6,7 +6,6 @@ import {
   createBackMainMenuButtons,
 } from "grammy-inline-menu";
 import { botsService } from "~/services/index";
-import { context } from "../context";
 
 export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
@@ -62,6 +61,10 @@ const botDeletedSuccessfullyMenu = new MenuTemplate<Context>((ctx) =>
 const repliesMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`replies.messageText`)
 );
+
+const forceSubMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`forceSubMenu.messageText`)
+);
 // start menu start
 startMenu.submenu((ctx) => ctx.t(`start_menu.add_bot`), "addbot", addBotMenu);
 
@@ -115,8 +118,15 @@ botMenu.submenu(
   groupSettingsMenu
 );
 
-botMenu.submenu((ctx) => ctx.t(`bot_menu.replies`), "replies", repliesMenu);
+botMenu.submenu((ctx) => ctx.t(`bot_menu.replies`), "replies", repliesMenu, {
+  joinLastRow: true,
+});
 
+botMenu.submenu(
+  (ctx) => ctx.t(`bot_menu.force_subscribe`),
+  "force_sub",
+  forceSubMenu
+);
 botMenu.submenu(
   (ctx) => ctx.t("bot_menu.delete_bot"),
   "delete",
@@ -220,7 +230,16 @@ groupSettingsMenu.manualRow(
   )
 );
 // group Settings menu end
+// force sub menu start
 
+forceSubMenu.manualRow(
+  createBackMainMenuButtons(
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
+  )
+);
+
+// force sub menu end
 // confirm delete group menu start
 
 confirmDeleteGroupMenu.submenu(

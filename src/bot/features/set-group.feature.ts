@@ -1,8 +1,8 @@
-import { Composer } from "grammy";
+import { Composer, matchFilter } from "grammy";
 
 import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
-import { botsService } from "~/services/index";
+import { botsService, chatsService } from "~/services/index";
 
 export const composer = new Composer<Context>();
 
@@ -19,6 +19,18 @@ feature
       ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
     );
   });
+// feature
+// .chatType(["group", "supergroup"])
+// .on(
+//   ["message:migrate_to_chat_id"],
+//   logHandle("bot added to a group by admin"),
+//   async (ctx) => {
+//     await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
+//     await ctx.reply(
+//       ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
+//     );
+//   }
+// );
 
 feature
   .chatType(["group", "supergroup"])
@@ -27,7 +39,6 @@ feature
       "message:group_chat_created",
       "message:supergroup_chat_created",
       "message:new_chat_members:me",
-      "message:migrate_to_chat_id",
     ],
     logHandle("bot added to a group by admin"),
     async (ctx) => {
@@ -37,3 +48,15 @@ feature
       );
     }
   );
+
+feature
+  .chatType(["group", "supergroup"])
+  .filter(matchFilter(":left_chat_member:me"))
+  .filter((ctx) => Number(ctx.local.bot?.groupId) === ctx.message.chat.id)
+  .use(logHandle("handle bot left admins group"), async (ctx) => {
+    if (typeof Number(ctx.local.bot?.groupId) === "number")
+      await chatsService.disconnectAdminsGroup(
+        Number(ctx.local.bot?.groupId),
+        ctx.me.id
+      );
+  });

@@ -46,13 +46,17 @@ model User {
 }
 
 model Chat {
-  chatId   BigInt   @id @map("chat_id")
-  title    String?  @map("title")
-  username String?  @map("username") @db.VarChar(32)
-  owner    User?    @relation("chatsOwned", fields: [ownerId], references: [userId])
-  ownerId  BigInt?  @map("owner_id")
-  type     ChatType @map("type")
-  Bots     Bot[]
+  chatId    BigInt     @id @map("chat_id")
+  title     String?    @map("title")
+  username  String?    @map("username") @db.VarChar(32)
+  owner     User?      @relation("chatsOwned", fields: [ownerId], references: [userId])
+  ownerId   BigInt?    @map("owner_id")
+  type      ChatType   @map("type")
+  Bots      Bot[]
+  botChats  BotChats[]
+  messages  Message[]
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  createdAt DateTime   @default(now()) @map("created_at")
 
   @@map(name: "chats")
 }
@@ -65,7 +69,8 @@ model Bot {
   subscribers Subscription[]
   messages    Message[]
   replies     Reply[]
-  adminsGroup Chat?          @relation(fields: [groupId], references: [chatId])
+  botChats    BotChats[]
+  adminsGroup Chat?          @relation(fields: [groupId], references: [chatId], onUpdate: Cascade, onDelete: SetNull)
   groupId     BigInt?        @map("group_id")
   firstName   String         @default("bot_name") @map("first_name") @db.VarChar(210) //longest name for a bot in nashrabot db is 206
   username    String         @map("username") @db.VarChar(32)
@@ -87,11 +92,25 @@ model Message {
   source          User     @relation(name: "UserSentMessage", fields: [sourceId], references: [userId])
   destId          BigInt   @map("dest_id")
   groupId         BigInt?  @map("group_id")
+  adminsGroup     Chat?    @relation(fields: [groupId], references: [chatId], onUpdate: Cascade)
   text            String?  @map("text") @db.VarChar(4096)
   updatedAt       DateTime @updatedAt @map("updated_at")
   createdAt       DateTime @default(now()) @map("created_at")
 
   @@map(name: "messages")
+}
+
+model Reply {
+  trigger   String   @map("trigger")
+  bot       Bot      @relation(fields: [botId], references: [botId])
+  botId     BigInt   @map("bot_id")
+  messageId Int      @map("message_id")
+  chatId    BigInt   @map("chat_id")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([trigger, botId], name: "reply_pkey")
+  @@map(name: "replies")
 }
 
 model Subscription {
@@ -108,13 +127,16 @@ model Subscription {
   @@map(name: "subscriptions")
 }
 
-model Reply {
-  trigger   String @map("trigger")
-  bot       Bot    @relation(fields: [botId], references: [botId])
-  botId     BigInt @map("bot_id")
-  messageId Int    @map("message_id")
-  chatId    BigInt @map("chat_id")
+model BotChats {
+  bot            Bot      @relation(fields: [botId], references: [botId])
+  botId          BigInt   @map("bot_id")
+  chat           Chat     @relation(fields: [chatId], references: [chatId], onUpdate: Cascade, onDelete: Cascade)
+  chatId         BigInt   @map("chat_id")
+  status         String?
+  canInviteUsers Boolean?
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  createdAt      DateTime @default(now()) @map("created_at")
 
-  @@unique([trigger, botId], name: "reply_pkey")
-  @@map(name: "replies")
+  @@unique([botId, chatId])
+  @@map("bot_chats")
 }

@@ -9,7 +9,57 @@ export const composer = new Composer<Context>();
 const feature = composer
   // .chatType("private")
   .drop(matchFilter("message:pinned_message"));
-
+// feature
+//   .filter(matchFilter("edited_message"))
+//   .filter(
+//     (ctx) =>
+//       Number(ctx.local.bot?.ownerId) === ctx.editedMessage.chat.id ||
+//       Number(ctx.local.bot?.groupId) === ctx.editedMessage.chat.id
+//   )
+//   .use(logHandle("handle edited_message by admin"), async (ctx) => {
+//     ctx.replyWithChatAction("typing");
+//     const sourceMessageId = ctx.update.edited_message.message_id;
+//     const sourceId = ctx.update.edited_message.chat.id;
+//     const botId = ctx.me.id;
+//     const message =
+//       await messagesService.findBySourceMessageIdAndSourceIdAndBotId(
+//         sourceMessageId,
+//         sourceId,
+//         botId,
+//         {
+//           where: {
+//             sourceMessageId,
+//             sourceId,
+//             botId,
+//           },
+//         }
+//       );
+//     if (message.length === 1) {
+//       const editNotificationMessage = await ctx.copyMessage(
+//         Number(message[0].destId),
+//         {
+//           reply_to_message_id: message[0].destMessageId,
+//           reply_markup: {
+//             inline_keyboard: [
+//               [{ text: ctx.t(`message.edited`), callback_data: "edited" }],
+//             ],
+//           },
+//         }
+//       );
+//       if (editNotificationMessage) {
+//         const destMessageId = editNotificationMessage.message_id;
+//         const { destId } = message[0];
+//         await messagesService.createMessage(
+//           sourceMessageId,
+//           destMessageId,
+//           sourceId,
+//           Number(destId),
+//           botId,
+//           ctx.update.edited_message.text
+//         );
+//       }
+//     }
+//   });
 feature.on(
   "edited_message",
   logHandle("handle edited_message"),
