@@ -30,6 +30,7 @@ message_delivery =
     .message_forwarded = Message forwarded by <b>{$firstName}</b>!
     .you_are_banned = :( the bot owner have banned you from sending messages to him.
     .user_blocked_bot = Message failed to send! this user have blocked the bot.
+    .owner_blocked_bot = the bot owner blocked his own bot! 🤦🏻‍♂️
 
 # message_edited_by_sender limited to 0-200 characters
 keyboard = 

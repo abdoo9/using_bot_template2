@@ -56,11 +56,14 @@ const groupSettingsMenu = new MenuTemplate<Context>(async (ctx) => {
       >;
       if (adminsGroup) {
         const { title, invite_link: inviteLink, username } = adminsGroup;
-        return ctx.t(`set_group.messageTextWithGroupInfo`, {
-          title: escapeHTML(title),
-          username: username || "not-provided",
-          inviteLink: inviteLink || "not-provided",
-        });
+        return {
+          text: ctx.t(`set_group.messageTextWithGroupInfo`, {
+            title: escapeHTML(title),
+            username: username || "not-provided",
+            inviteLink: inviteLink || "not-provided",
+          }),
+          parse_mode: "HTML",
+        };
       }
     }
     return ctx.t(`set_group.messageText`);

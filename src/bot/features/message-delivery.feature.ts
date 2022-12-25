@@ -17,6 +17,7 @@ import {
 import { messageEditedBySenderKeyboard } from "~/bot/keyboards";
 import { escapeHTML } from "~/bot/helpers/escape-html";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function errorHandler(err: BotError<Context>, next: NextFunction) {
   const error = err.error as GrammyError;
   const { ctx } = err;
@@ -37,7 +38,11 @@ async function errorHandler(err: BotError<Context>, next: NextFunction) {
   } else if (error.description === "Forbidden: bot was blocked by the user") {
     const userId = error.payload.chat_id as number;
     await usersService.userBlockedBot(userId, ctx.me.id);
-    await ctx.reply(ctx.t("message_delivery.user_blocked_bot"));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const errMsg =
+      Number(ctx.local.bot?.ownerId) === userId
+        ? await ctx.reply(ctx.t("message_delivery.owner_blocked_bot"))
+        : await ctx.reply(ctx.t("message_delivery.user_blocked_bot"));
   }
 }
 
@@ -264,5 +269,3 @@ feature
       }
     }
   );
-
-// TODO: add error boundery to check if the group is still valid
