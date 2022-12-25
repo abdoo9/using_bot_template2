@@ -7,7 +7,8 @@ export const middleware =
     if (
       ctx.msg?.date &&
       new Date().getTime() / 1000 - ctx.msg.date > threshold &&
-      !ctx.callbackQuery
+      !ctx.callbackQuery &&
+      !ctx.msg.edit_date
     ) {
       console.log(
         `Ignoring message from user ${ctx.from?.id} at chat ${ctx.chat?.id} (${

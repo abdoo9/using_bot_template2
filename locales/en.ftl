@@ -29,7 +29,12 @@ message_delivery =
     .failed = Message failed to send!
     .message_forwarded = Message forwarded by {$firstName}!
     .you_are_banned = :( the bot owner have banned you from sending messages to him.
-    
+
+# message_edited_by_sender limited to 0-200 characters
+keyboard = 
+    .message_edited_by_sender = original message is the message that have been replied to by this message, this is the new version of the message
+    .message_edited_by_sender_buttonText = message edited
+   
 ban = 
     .how_to_use = reply to the message of the user that you want to ban with this command
     .user_banned_successfully = user have been banned successfully
