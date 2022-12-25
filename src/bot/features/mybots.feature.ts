@@ -8,6 +8,7 @@ import {
 import { botsService, chatsService } from "~/services/index";
 import { extractGroupId } from "~/bot/helpers/extract-group-id";
 import { ChatFromGetChat } from "grammy/types";
+import { escapeHTML } from "~/bot/helpers/escape-html";
 
 // TODO: seperate these menus into files in /menus
 
@@ -24,15 +25,18 @@ const startMenu = new MenuTemplate<Context>(
   (ctx) => `Hey ${ctx.from?.first_name}!`
 );
 
-const addBotMenu = new MenuTemplate<Context>(
-  (ctx) => `Hey ${ctx.from?.first_name}!`
-);
+const addBotMenu = new MenuTemplate<Context>((ctx) => {
+  return { text: `Hey ${ctx.from?.first_name}!`, parse_mode: "HTML" };
+});
 
-const myBotsMenu = new MenuTemplate<Context>((ctx) =>
-  ctx.t(`my_bots.bots_count`, {
-    botsCount: ctx.local.user?.botsOwned.length || 0,
-  })
-);
+const myBotsMenu = new MenuTemplate<Context>((ctx) => {
+  return {
+    text: ctx.t(`my_bots.bots_count`, {
+      botsCount: ctx.local.user?.botsOwned.length || 0,
+    }),
+    parse_mode: "HTML",
+  };
+});
 
 const botMenu = new MenuTemplate<Context>(
   (ctx) => `You chose city ${ctx.match}`
@@ -53,7 +57,7 @@ const groupSettingsMenu = new MenuTemplate<Context>(async (ctx) => {
       if (adminsGroup) {
         const { title, invite_link: inviteLink, username } = adminsGroup;
         return ctx.t(`set_group.messageTextWithGroupInfo`, {
-          title,
+          title: escapeHTML(title),
           username: username || "not-provided",
           inviteLink: inviteLink || "not-provided",
         });

@@ -85,4 +85,33 @@ export const createService = (prisma: PrismaClient) =>
 
       return prisma.user.update(_.merge(query, args));
     },
+    userBlockedBot: <T extends Prisma.UserArgs>(
+      userId: number,
+      botId: number,
+      args?: Prisma.SelectSubset<T, Prisma.UserArgs>,
+      select?: Prisma.SelectSubset<T, Prisma.UserArgs>
+    ) => {
+      const query = {
+        where: {
+          userId,
+        },
+        data: {
+          subscriptions: {
+            update: {
+              where: {
+                subscription_pkey: {
+                  botId,
+                  userId,
+                },
+              },
+              data: {
+                botIsBlocked: true,
+              },
+            },
+          },
+        },
+      } satisfies Prisma.UserUpdateArgs;
+
+      return prisma.user.update<T & typeof query>(_.merge(query, args, select));
+    },
   });

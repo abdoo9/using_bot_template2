@@ -3,6 +3,7 @@ import { Composer, matchFilter } from "grammy";
 import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
 import { botsService, chatsService } from "~/services/index";
+import { escapeHTML } from "~/bot/helpers/escape-html";
 
 export const composer = new Composer<Context>();
 const feature = composer.chatType(["group", "supergroup"]);
@@ -14,7 +15,9 @@ feature.command(
     ctx.replyWithChatAction("typing");
     await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
     await ctx.reply(
-      ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
+      ctx.t(`set_group.group_set_successfully`, {
+        title: escapeHTML(ctx.chat.title),
+      })
     );
   }
 );
@@ -41,7 +44,9 @@ feature.on(
   async (ctx) => {
     await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
     await ctx.reply(
-      ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
+      ctx.t(`set_group.group_set_successfully`, {
+        title: escapeHTML(ctx.chat.title),
+      })
     );
   }
 );
@@ -69,8 +74,8 @@ feature
   .use(
     logHandle("handle bot is restricted from sending messages in adminsGroup"),
     async (ctx) => {
-      const { title } = ctx.update.my_chat_member.chat;
-      const { first_name: firstName } = ctx.update.my_chat_member.from;
+      const title = escapeHTML(ctx.update.my_chat_member.chat.title);
+      const firstName = escapeHTML(ctx.update.my_chat_member.from.first_name);
       ctx.leaveChat();
       ctx.api.sendMessage(
         Number(ctx.local.bot?.ownerId),

@@ -9,16 +9,16 @@ language =
     .changed = Language successfully changed!
 
 token_received = 
-    .new_bot = New bot added, your bot {$firstName} which is @{$username}!
-    .updated_bot = Bot updated your bot {$firstName} which is @{$username}!
+    .new_bot = New bot added, your bot <b>{$firstName}</b> which is @{$username}!
+    .updated_bot = Bot updated your bot <b>{$firstName}</b> which is @{$username}!
     .invalid = Invalid token
 
 my_bots = 
     .bots_count = { NUMBER($botsCount) ->
       [0] it seems that you have no bots yet. \n to add a new bot, use the /addBot command
       [1] you have one bot.
-      [2] you have {$botsCount} bots.
-      *[other] you have {$botsCount} bots.
+      [2] you have <b>{$botsCount}</b> bots.
+      *[other] you have <b>{$botsCount}</b> bots.
     }
 
 message =
@@ -27,8 +27,9 @@ message =
 message_delivery = 
     .success = Message successfully sent!
     .failed = Message failed to send!
-    .message_forwarded = Message forwarded by {$firstName}!
+    .message_forwarded = Message forwarded by <b>{$firstName}</b>!
     .you_are_banned = :( the bot owner have banned you from sending messages to him.
+    .user_blocked_bot = Message failed to send! this user have blocked the bot.
 
 # message_edited_by_sender limited to 0-200 characters
 keyboard = 
@@ -44,7 +45,7 @@ unban =
     .user_unbanned_successfully = user have been unbanned successfully
 
 unbanAll = 
-    .all_users_unbanned = { $count } users have been unbanned!
+    .all_users_unbanned = <b>{ $count }</b> users have been unbanned!
 
 bot_menu =
     .broadcast = broadcast
@@ -74,10 +75,10 @@ set_reply=
 
 set_group=
     .messageText = here you can change the settings of the admins group
-    .bot_restricted_from_adminsGroup = I have left the group because { $firstName } have restricted me from sending message in { $title }
+    .bot_restricted_from_adminsGroup = I have left the group because <b>{ $firstName }</b> have restricted me from sending message in <b>{ $title }</b>
     .messageTextWithGroupInfo = your current group that the bot is forwarding messages to is
 
-    title = { $title }
+    title = <b>{ $title }</b>
     { $inviteLink ->
     [not-provided] ​
     *[other] link = {$inviteLink}
@@ -86,7 +87,7 @@ set_group=
     [not-provided] ​
     *[other] username = @{$username}
       }
-    .group_set_successfully = { $title } have been set successfully from now on I'll forward all messages to here.
+    .group_set_successfully = <b>{ $title }</b> have been set successfully from now on I'll forward all messages to here.
     .how_to_set = how to set group
     .how_to_set_url = https://t.me/+bJSfGztNJiU4NWU5
     .how_to_change = how to chage group

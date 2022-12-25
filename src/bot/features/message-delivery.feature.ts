@@ -8,10 +8,14 @@ import {
 } from "grammy";
 import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
-import { botsService, chatsService, messagesService } from "~/services/index";
+import {
+  botsService,
+  chatsService,
+  messagesService,
+  usersService,
+} from "~/services/index";
 import { messageEditedBySenderKeyboard } from "~/bot/keyboards";
-
-// TODO: htmlEscape all user input variables
+import { escapeHTML } from "~/bot/helpers/escape-html";
 
 async function errorHandler(err: BotError<Context>, next: NextFunction) {
   const error = err.error as GrammyError;
@@ -25,19 +29,23 @@ async function errorHandler(err: BotError<Context>, next: NextFunction) {
     await chatsService.disconnectAdminsGroup(
       Number(ctx.local.bot?.groupId),
       ctx.me.id
-    );
+    ); // TODO: when this error happen the message will be lost and will not be forwarded to the admin
     await ctx.api.sendMessage(
       Number(ctx.local.bot?.ownerId),
       ctx.t("set_group.something_went_wrong")
     );
-  } // TODO: when this error happen the message will be lost and will not be forwarded to the admin
+  } else if (error.description === "Forbidden: bot was blocked by the user") {
+    const userId = error.payload.chat_id as number;
+    await usersService.userBlockedBot(userId, ctx.me.id);
+    await ctx.reply(ctx.t("message_delivery.user_blocked_bot"));
+  }
 }
 
 export const composer = new Composer<Context>();
 
 const feature = composer
-  .drop(matchFilter("message:pinned_message"))
-  .errorBoundary(errorHandler);
+  .errorBoundary(errorHandler)
+  .drop(matchFilter("message:pinned_message"));
 
 feature.use(messageEditedBySenderKeyboard);
 
@@ -113,7 +121,7 @@ feature
         throw new Error("fatal: Bot not found");
       }
       if (dest.subscribers[0]?.userIsBanned) {
-        ctx.reply(ctx.t("message_delivery.you_are_banned"));
+        await ctx.reply(ctx.t("message_delivery.you_are_banned"));
         return;
       }
       if (
@@ -141,13 +149,13 @@ feature
           const { sourceId } = replyToMessage[0];
           const { groupId } = replyToMessage[0];
           const { text } = ctx.message;
-          ctx
+          await ctx
             .copyMessage(Number(sourceId), {
               reply_to_message_id: sourceMessageId,
             })
-            .catch((err) => {
-              throw new Error(err);
-            })
+            // .catch((err) => {
+            //   throw new Error(err);
+            // })
             .then(async (msg) => {
               await messagesService.createMessage(
                 ctx.message.message_id,
@@ -190,7 +198,7 @@ feature
           ctx.api.sendMessage(
             (dest.groupId ? dest.groupId : dest.ownerId).toString(),
             ctx.t(`message_delivery.message_forwarded`, {
-              firstName: ctx.from?.first_name,
+              firstName: escapeHTML(ctx.from.first_name),
             }),
             {
               reply_to_message_id: destMessageId,

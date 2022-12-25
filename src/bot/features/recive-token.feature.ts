@@ -3,6 +3,7 @@ import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
 import { botsService } from "~/services/index";
 import { isNewBot } from "~/bot/helpers/compare-dateime";
+import { escapeHTML } from "~/bot/helpers/escape-html";
 
 export const composer = new Composer<Context>();
 
@@ -46,8 +47,14 @@ feature.hears(
     ctx.reply(
       `${
         isNew
-          ? ctx.t("token_received.new_bot", { firstName, username })
-          : ctx.t("token_received.updated_bot", { firstName, username })
+          ? ctx.t("token_received.new_bot", {
+              firstName: escapeHTML(firstName),
+              username,
+            })
+          : ctx.t("token_received.updated_bot", {
+              firstName: escapeHTML(firstName),
+              username,
+            })
       }`
     );
   }
