@@ -5,7 +5,11 @@ import {
   MenuMiddleware,
   createBackMainMenuButtons,
 } from "grammy-inline-menu";
-import { botsService } from "~/services/index";
+import { botsService, chatsService } from "~/services/index";
+import { extractGroupId } from "~/bot/helpers/extract-group-id";
+import { ChatFromGetChat } from "grammy/types";
+
+// TODO: seperate these menus into files in /menus
 
 export const composer = new Composer<Context>();
 const feature = composer.chatType("private");
@@ -38,9 +42,34 @@ const broadcastOptionsMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`broadcast_menu.messageText`)
 );
 
-const groupSettingsMenu = new MenuTemplate<Context>((ctx) =>
-  ctx.t(`set_group.messageText`)
-);
+const groupSettingsMenu = new MenuTemplate<Context>(async (ctx) => {
+  const groupId = await extractGroupId(ctx);
+  try {
+    if (groupId) {
+      const adminsGroup = (await ctx.api.getChat(Number(groupId))) as Extract<
+        ChatFromGetChat,
+        { type: "supergroup" }
+      >;
+      if (adminsGroup) {
+        const { title, invite_link: inviteLink, username } = adminsGroup;
+        return ctx.t(`set_group.messageTextWithGroupInfo`, {
+          title,
+          username: username || "not-provided",
+          inviteLink: inviteLink || "not-provided",
+        });
+      }
+    }
+    return ctx.t(`set_group.messageText`);
+  } catch (e: any) {
+    if (e.description === "Bad Request: chat not found") {
+      await chatsService.disconnectAdminsGroup(
+        Number(ctx.local.bot?.groupId),
+        Number(ctx.match?.[1])
+      );
+    }
+    return ctx.t(`set_group.messageText`);
+  }
+});
 
 const confirmDeleteGroupMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`set_group.confirm_delete_messageText`)
@@ -220,7 +249,10 @@ groupSettingsMenu.url(
 groupSettingsMenu.submenu(
   (ctx) => ctx.t(`set_group.delete`),
   "delete",
-  confirmDeleteGroupMenu
+  confirmDeleteGroupMenu,
+  {
+    hide: async (ctx) => !(await extractGroupId(ctx)),
+  }
 );
 
 groupSettingsMenu.manualRow(
@@ -264,7 +296,13 @@ confirmDeleteGroupMenu.interact(
 
 groupDeletedSuccessfullyMenu.interact(
   async (ctx) => {
-    await botsService.updateGroupId(Number(ctx.match?.[1]), null);
+    const groupId = await extractGroupId(ctx);
+    if (Number(groupId) < -100)
+      // cause Number(null) = 0 and group id is always -bigNumber
+      await chatsService.disconnectAdminsGroup(
+        Number(ctx.local.bot?.groupId),
+        Number(ctx.match?.[1])
+      );
     return ctx.t(`bot_menu.mainMenu`);
   },
   "back",
@@ -281,7 +319,7 @@ groupDeletedSuccessfullyMenu.interact(
 
 botDeletedSuccessfullyMenu.interact(
   async (ctx) => {
-    await botsService.makeBotNotActive(Number(ctx.match?.[1]));
+    await botsService.makeBotNotActive(Number(ctx.match?.[1])); // TODO: when bot is not active make it not answer any updates, when token is sent make it active again
     return ctx.t(`bot_menu.mainMenu`);
   },
   "back",

@@ -3,12 +3,13 @@ import { Composer, matchFilter } from "grammy";
 import { Context } from "~/bot/types";
 import { logHandle } from "~/bot/helpers/logging";
 import { botsService, messagesService } from "~/services/index";
+import { messageEditedBySenderKeyboard } from "~/bot/keyboards";
 
 export const composer = new Composer<Context>();
 
-const feature = composer
-  // .chatType("private")
-  .drop(matchFilter("message:pinned_message"));
+const feature = composer.drop(matchFilter("message:pinned_message"));
+
+feature.use(messageEditedBySenderKeyboard);
 // feature
 //   .filter(matchFilter("edited_message"))
 //   .filter(
@@ -86,11 +87,7 @@ feature.on(
         Number(message[0].destId),
         {
           reply_to_message_id: message[0].destMessageId,
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: ctx.t(`message.edited`), callback_data: "edited" }],
-            ],
-          },
+          reply_markup: messageEditedBySenderKeyboard,
         }
       );
       if (editNotificationMessage) {
@@ -176,7 +173,7 @@ feature
               Number(replyToMessage[0].sourceId),
               botId,
               text,
-              Number(groupId)
+              Number(groupId) || undefined
             );
           });
       }
@@ -273,3 +270,4 @@ feature
       }
     }
   );
+// TODO: add error boundery to check if the group is still valid

@@ -69,6 +69,17 @@ set_reply=
 
 set_group=
     .messageText = here you can change the settings of the admins group
+    .messageTextWithGroupInfo = your current group that the bot is forwarding messages to is
+
+    title = { $title }
+    { $inviteLink ->
+    [not-provided] ​
+    *[other] link = {$inviteLink}
+      }
+    { $username ->
+    [not-provided] ​
+    *[other] username = @{$username}
+      }
     .group_set_successfully = { $title } have been set successfully from now on I'll forward all messages to here.
     .how_to_set = how to set group
     .how_to_set_url = https://t.me/+bJSfGztNJiU4NWU5
