@@ -74,6 +74,7 @@ set_reply=
 
 set_group=
     .messageText = here you can change the settings of the admins group
+    .bot_restricted_from_adminsGroup = I have left the group because { $firstName } have restricted me from sending message in { $title }
     .messageTextWithGroupInfo = your current group that the bot is forwarding messages to is
 
     title = { $title }

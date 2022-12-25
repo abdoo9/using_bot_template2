@@ -5,20 +5,19 @@ import { logHandle } from "~/bot/helpers/logging";
 import { botsService, chatsService } from "~/services/index";
 
 export const composer = new Composer<Context>();
+const feature = composer.chatType(["group", "supergroup"]);
 
-const feature = composer.filter(
-  (ctx) => Number(ctx.local.bot?.ownerId) === ctx.from?.id
-);
-
-feature
-  .chatType(["group", "supergroup"])
-  .command(["set_group", "sg"], logHandle("handle /set_group"), async (ctx) => {
+feature.command(
+  ["set_group", "sg"],
+  logHandle("handle /set_group"),
+  async (ctx) => {
     ctx.replyWithChatAction("typing");
     await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
     await ctx.reply(
       ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
     );
-  });
+  }
+);
 // feature
 // .chatType(["group", "supergroup"])
 // .on(
@@ -32,27 +31,24 @@ feature
 //   }
 // );
 
-feature
-  .chatType(["group", "supergroup"])
-  .on(
-    [
-      "message:group_chat_created",
-      "message:supergroup_chat_created",
-      "message:new_chat_members:me",
-    ],
-    logHandle("bot added to a group by admin"),
-    async (ctx) => {
-      await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
-      await ctx.reply(
-        ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
-      );
-    }
-  );
+feature.on(
+  [
+    "message:group_chat_created",
+    "message:supergroup_chat_created",
+    "message:new_chat_members:me",
+  ],
+  logHandle("bot added to a group by admin"),
+  async (ctx) => {
+    await botsService.updateGroupId(ctx.me.id, ctx.chat.id);
+    await ctx.reply(
+      ctx.t(`set_group.group_set_successfully`, { title: ctx.chat.title })
+    );
+  }
+);
 
 feature
-  .chatType(["group", "supergroup"])
+  .filter((ctx) => Number(ctx.local.bot?.groupId) === ctx.message?.chat.id)
   .filter(matchFilter(":left_chat_member:me"))
-  .filter((ctx) => Number(ctx.local.bot?.groupId) === ctx.message.chat.id)
   .use(logHandle("handle bot left admins group"), async (ctx) => {
     if (typeof Number(ctx.local.bot?.groupId) === "number")
       await chatsService.disconnectAdminsGroup(
@@ -60,3 +56,28 @@ feature
         ctx.me.id
       );
   });
+
+feature
+  .on("my_chat_member")
+  .filter(
+    (ctx) =>
+      Number(ctx.local.bot?.groupId) === ctx.update.my_chat_member.chat.id &&
+      ctx.update.my_chat_member.new_chat_member.status === "restricted" &&
+      ctx.update.my_chat_member.new_chat_member.is_member === true &&
+      ctx.update.my_chat_member.new_chat_member.can_send_messages === false
+  )
+  .use(
+    logHandle("handle bot is restricted from sending messages in adminsGroup"),
+    async (ctx) => {
+      const { title } = ctx.update.my_chat_member.chat;
+      const { first_name: firstName } = ctx.update.my_chat_member.from;
+      ctx.leaveChat();
+      ctx.api.sendMessage(
+        Number(ctx.local.bot?.ownerId),
+        ctx.t("set_group.bot_restricted_from_adminsGroup", {
+          title,
+          firstName,
+        })
+      );
+    }
+  );
