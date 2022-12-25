@@ -13,6 +13,10 @@ token_received =
     .updated_bot = Bot updated your bot <b>{$firstName}</b> which is @{$username}!
     .invalid = Invalid token
 
+start_menu = 
+    .my_bots = my bots
+    .add_bot = add bot
+
 my_bots = 
     .bots_count = { NUMBER($botsCount) ->
       [0] it seems that you have no bots yet. \n to add a new bot, use the /addBot command
@@ -54,9 +58,13 @@ bot_menu =
     .replies = replies
     .group_settings = group settings
     .delete_bot = delete bot
+    .force_subscribe = force subscribe
     .back = 🔙back
     .mainMenu = 🔝main menu
 
+forceSubMenu = 
+    .messageText = here is force subscribe settings
+    
 broadcast_menu =
     .messageText = broadcast options
     .send_to_all = send message to all users
