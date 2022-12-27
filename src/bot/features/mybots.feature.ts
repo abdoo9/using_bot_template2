@@ -101,6 +101,18 @@ const repliesMenu = new MenuTemplate<Context>((ctx) =>
 const forceSubMenu = new MenuTemplate<Context>((ctx) =>
   ctx.t(`forceSubMenu.messageText`)
 );
+
+const forceSubGroupMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`forceSubGroupMenu.messageText`)
+);
+
+const forceSubChannelMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`forceSubGroupMenu.messageText`)
+);
+
+const forceSubChannelsMenu = new MenuTemplate<Context>((ctx) =>
+  ctx.t(`forceSubGroupMenu.messageText`)
+);
 // start menu start
 startMenu.submenu((ctx) => ctx.t(`start_menu.add_bot`), "addbot", addBotMenu);
 
@@ -271,6 +283,18 @@ groupSettingsMenu.manualRow(
 // group Settings menu end
 // force sub menu start
 
+forceSubMenu.submenu(
+  (ctx) => ctx.t("force_sub_channel.add_channel"),
+  "addChannel",
+  forceSubChannelMenu
+);
+
+forceSubMenu.submenu(
+  (ctx) => ctx.t("force_sub_group.add_group"),
+  "addGroup",
+  forceSubGroupMenu
+);
+
 forceSubMenu.manualRow(
   createBackMainMenuButtons(
     (ctx) => ctx.t(`bot_menu.back`),
@@ -279,6 +303,24 @@ forceSubMenu.manualRow(
 );
 
 // force sub menu end
+
+// forceSubChannelMenu start
+
+forceSubChannelMenu.chooseIntoSubmenu(
+  "ch",
+  async (ctx) => {
+    const bot = await botsService.findBotChannels(Number(ctx.match?.[1]));
+    return (
+      bot?.botChats.reduce((acc, botChat) => {
+        return { ...acc, [String(botChat.chatId)]: `@${botChat.chat.title}` };
+      }, {}) || []
+    );
+  },
+  forceSubChannelsMenu
+);
+
+// forceSubChannelMenu end
+
 // confirm delete group menu start
 
 confirmDeleteGroupMenu.submenu(

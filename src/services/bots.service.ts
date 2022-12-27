@@ -317,6 +317,31 @@ export const createService = (prisma: PrismaClient) =>
       return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
     },
 
+    findBotChannels: <T extends Prisma.BotArgs>(
+      botId: number
+      // args?: Prisma.SelectSubset<T, Prisma.BotFindFirstArgs>
+      // select?: Prisma.SelectSubset<T, Prisma.BotArgs>
+    ) => {
+      const query = {
+        where: {
+          botId,
+        },
+        select: {
+          botChats: {
+            where: {
+              botId,
+              status: "administrator",
+            },
+            include: {
+              chat: true,
+            },
+          },
+        },
+      } satisfies Prisma.BotFindUniqueArgs;
+
+      return prisma.bot.findUnique<T & typeof query>(_.merge(query));
+    },
+
     // migrateChat: <T extends Prisma.BotArgs>(
     //   botId: number,
     //   migrateFromChatId: number,
