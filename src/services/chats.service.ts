@@ -1,7 +1,6 @@
 import _ from "lodash";
-import type { Prisma, PrismaClient } from "@prisma/client";
-import type { PartialDeep } from "type-fest";
-import { Chat } from "grammy/types";
+import type { Prisma, PrismaClient, Status } from "@prisma/client";
+import { Chat, ChatMemberUpdated, Message, User } from "grammy/types";
 
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.user, {
@@ -64,5 +63,137 @@ export const createService = (prisma: PrismaClient) =>
       } satisfies Prisma.ChatUpdateArgs;
 
       return prisma.chat.update<T & typeof query>(_.merge(query, args, select));
+    },
+    upsertChatMember: <T extends Prisma.ChatArgs>(
+      chatMember: ChatMemberUpdated,
+      args?: Prisma.SelectSubset<T, Prisma.ChatUpsertArgs>,
+      select?: Prisma.SelectSubset<T, Prisma.ChatArgs>
+    ) => {
+      const query = {
+        where: {
+          chatId: chatMember.chat.id,
+        },
+        create: {
+          chatId: chatMember.chat.id,
+          type: chatMember.chat.type,
+          members: {
+            connectOrCreate: {
+              where: {
+                userId_chatId: {
+                  chatId: chatMember.chat.id,
+                  userId: chatMember.new_chat_member.user.id,
+                },
+              },
+              create: {
+                userId: chatMember.new_chat_member.user.id,
+                status: chatMember.new_chat_member.status,
+              },
+            },
+          },
+        },
+        update: {
+          chatId: chatMember.chat.id,
+          type: chatMember.chat.type,
+          members: {
+            connectOrCreate: {
+              where: {
+                userId_chatId: {
+                  chatId: chatMember.chat.id,
+                  userId: chatMember.new_chat_member.user.id,
+                },
+              },
+              create: {
+                userId: chatMember.new_chat_member.user.id,
+                status: chatMember.new_chat_member.status,
+              },
+            },
+            update: {
+              where: {
+                userId_chatId: {
+                  chatId: chatMember.chat.id,
+                  userId: chatMember.new_chat_member.user.id,
+                },
+              },
+              data: {
+                status: chatMember.new_chat_member.status,
+              },
+            },
+          },
+        },
+      } satisfies Prisma.ChatUpsertArgs;
+
+      return prisma.chat.upsert<T & typeof query>(_.merge(query, args, select));
+    },
+    upsertChatMemberMsg: <T extends Prisma.ChatArgs>(
+      chat:
+        | (Chat.GroupChat & {
+            type: "channel" | "group" | "supergroup";
+          })
+        | (Chat.SupergroupChat & {
+            type: "channel" | "group" | "supergroup";
+          })
+        | (Chat.ChannelChat & {
+            type: "channel" | "group" | "supergroup";
+          }),
+
+      user: User,
+      status: Status,
+      args?: Prisma.SelectSubset<T, Prisma.ChatUpsertArgs>,
+      select?: Prisma.SelectSubset<T, Prisma.ChatArgs>
+    ) => {
+      const query = {
+        where: {
+          chatId: chat.id,
+        },
+        create: {
+          chatId: chat.id,
+          type: chat.type,
+          members: {
+            connectOrCreate: {
+              where: {
+                userId_chatId: {
+                  chatId: chat.id,
+                  userId: user.id,
+                },
+              },
+              create: {
+                userId: user.id,
+                status,
+              },
+            },
+          },
+        },
+        update: {
+          chatId: chat.id,
+          type: chat.type,
+          members: {
+            connectOrCreate: {
+              where: {
+                userId_chatId: {
+                  chatId: chat.id,
+                  userId: user.id,
+                },
+              },
+              create: {
+                userId: user.id,
+                status,
+              },
+            },
+            update: {
+              where: {
+                userId_chatId: {
+                  chatId: chat.id,
+                  userId: user.id,
+                },
+              },
+              data: {
+                status,
+              },
+            },
+          },
+        },
+      } satisfies Prisma.ChatUpsertArgs;
+
+      return prisma.chat.upsert<T & typeof query>(_.merge(query, args, select));
     },
   });

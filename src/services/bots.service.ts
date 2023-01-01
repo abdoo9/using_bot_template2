@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Status } from "@prisma/client";
 import type { PartialDeep } from "type-fest";
 import { Chat } from "grammy/types";
 
@@ -317,19 +317,34 @@ export const createService = (prisma: PrismaClient) =>
       return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
     },
 
-    findBotChannels: <T extends Prisma.BotArgs>(
+    findBotChannels: (
       botId: number
       // args?: Prisma.SelectSubset<T, Prisma.BotFindFirstArgs>
       // select?: Prisma.SelectSubset<T, Prisma.BotArgs>
     ) => {
-      const query = {
+      // const query = {
+      //   where: {
+      //     botId,
+      //   },
+      //   select: {
+      //     botChats: {
+      //       where: {
+
+      //       },
+      //       include: {
+      //         chat: true,
+      //       },
+      //     },
+      //   },
+      // } satisfies Prisma.BotFindUniqueArgs;
+
+      return prisma.bot.findUnique({
         where: {
           botId,
         },
         select: {
           botChats: {
             where: {
-              botId,
               status: "administrator",
             },
             include: {
@@ -337,71 +352,144 @@ export const createService = (prisma: PrismaClient) =>
             },
           },
         },
-      } satisfies Prisma.BotFindUniqueArgs;
-
-      return prisma.bot.findUnique<T & typeof query>(_.merge(query));
+      }); // _.merge(query));
     },
+    updateForceSub: (botId: number, chatId: number, forceSub: boolean) => {
+      return prisma.bot.update({
+        where: {
+          botId,
+        },
+        data: {
+          botChats: {
+            update: {
+              where: {
+                botId_chatId: {
+                  botId,
+                  chatId,
+                },
+              },
+              data: {
+                forceSub,
+              },
+            },
+          },
+        },
+      });
+    },
+    updateBotChatStatus: (botId: number, chatId: number, status: Status) => {
+      return prisma.bot.update({
+        where: {
+          botId,
+        },
+        data: {
+          botChats: {
+            update: {
+              where: {
+                botId_chatId: {
+                  botId,
+                  chatId,
+                },
+              },
+              data: {
+                status,
+              },
+            },
+          },
+        },
+      });
+    },
+    botForceSub: (botId: number, chatId: number) => {
+      return prisma.bot.findUnique({
+        where: {
+          botId,
+        },
+        select: {
+          botChats: {
+            where: {
+              botId,
+              chatId,
+            },
+            select: {
+              forceSub: true,
+            },
+          },
+        },
+      });
+    },
+    upsertChatMember: <T extends Prisma.BotArgs>(
+      botId: number,
+      chat:
+        | (Chat.GroupChat & {
+            type: "channel" | "group" | "supergroup";
+          })
+        | (Chat.SupergroupChat & {
+            type: "channel" | "group" | "supergroup";
+          })
+        | (Chat.ChannelChat & {
+            type: "channel" | "group" | "supergroup";
+          }),
+      status:
+        | "member"
+        | "creator"
+        | "administrator"
+        | "restricted"
+        | "left"
+        | "kicked"
+        | undefined,
+      canInviteUsers: boolean,
+      args?: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>,
+      select?: Prisma.SelectSubset<T, Prisma.BotArgs>
+    ) => {
+      const query = {
+        where: {
+          botId,
+        },
+        data: {
+          botChats: {
+            upsert: {
+              where: {
+                botId_chatId: {
+                  botId,
+                  chatId: chat.id,
+                },
+              },
+              create: {
+                chat: {
+                  connectOrCreate: {
+                    where: {
+                      chatId: chat.id,
+                    },
+                    create: {
+                      chatId: chat.id,
+                      type: chat.type,
+                      title: chat.title,
+                    },
+                  },
+                },
+                status,
+                canInviteUsers,
+              },
+              update: {
+                chat: {
+                  connectOrCreate: {
+                    where: {
+                      chatId: chat.id,
+                    },
+                    create: {
+                      chatId: chat.id,
+                      type: chat.type,
+                      title: chat.title,
+                    },
+                  },
+                },
+                status,
+                canInviteUsers,
+              },
+            },
+          },
+        },
+      } satisfies Prisma.BotUpdateArgs;
 
-    // migrateChat: <T extends Prisma.BotArgs>(
-    //   botId: number,
-    //   migrateFromChatId: number,
-    //   migrateToChatId: number,
-    //   chat:
-    //     | (Chat.GroupChat & {
-    //         type: "group" | "supergroup";
-    //       })
-    //     | (Chat.SupergroupChat & {
-    //         type: "group" | "supergroup";
-    //       }),
-    //   args?: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>,
-    //   select?: Prisma.SelectSubset<T, Prisma.BotArgs>
-    // ) => {
-    //   const query = {
-    //     where: {
-    //       botId,
-    //     },
-    //     data: {
-    //       botChats: {
-    //         upsert: {
-    //           where: {
-    //             botId_chatId: {
-    //               botId,
-    //               chatId: migrateFromChatId,
-    //             },
-    //           },
-    //           create: {
-    //             chat: {
-    //               connectOrCreate: {
-    //                 where: {
-    //                   chatId: migrateToChatId,
-    //                 },
-    //                 create: {
-    //                   chatId: migrateToChatId,
-    //                   type: "supergroup",
-    //                   title: chat.title,
-    //                 },
-    //               },
-    //             },
-    //           },
-    //           update: {
-    //             chat: {
-    //               connectOrCreate: {
-    //                 where: {
-    //                   chatId: migrateFromChatId,
-    //                 },
-    //                 create: {
-    //                   chatId: migrateToChatId,
-    //                   type: "supergroup",
-    //                   title: chat.title,
-    //                 },
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //     },
-    //   } satisfies Prisma.BotUpdateArgs;
-
-    //   return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
-    // },
+      return prisma.bot.update<T & typeof query>(_.merge(query, args, select));
+    },
   });

@@ -26,6 +26,15 @@ enum ChatType {
   channel
 }
 
+enum Status {
+  creator
+  administrator
+  member
+  restricted
+  left
+  kicked
+}
+
 model User {
   userId            BigInt         @id @map("user_id")
   role              Role           @default(USER)
@@ -33,6 +42,7 @@ model User {
   botsOwned         Bot[]          @relation("botsOwned")
   ChatsOwned        Chat[]         @relation("chatsOwned")
   messagesSent      Message[]      @relation("UserSentMessage")
+  chats             ChatMember[]
   firstName         String         @default("first_name") @map("first_name")
   lastName          String?        @map("last_name")
   username          String?        @map("username") @db.VarChar(32)
@@ -46,17 +56,18 @@ model User {
 }
 
 model Chat {
-  chatId    BigInt     @id @map("chat_id")
-  title     String?    @map("title")
-  username  String?    @map("username") @db.VarChar(32)
-  owner     User?      @relation("chatsOwned", fields: [ownerId], references: [userId])
-  ownerId   BigInt?    @map("owner_id")
-  type      ChatType   @map("type")
+  chatId    BigInt       @id @map("chat_id")
+  title     String?      @map("title")
+  username  String?      @map("username") @db.VarChar(32)
+  owner     User?        @relation("chatsOwned", fields: [ownerId], references: [userId])
+  ownerId   BigInt?      @map("owner_id")
+  type      ChatType     @map("type")
   Bots      Bot[]
   botChats  BotChats[]
   messages  Message[]
-  updatedAt DateTime   @updatedAt @map("updated_at")
-  createdAt DateTime   @default(now()) @map("created_at")
+  members   ChatMember[]
+  updatedAt DateTime     @updatedAt @map("updated_at")
+  createdAt DateTime     @default(now()) @map("created_at")
 
   @@map(name: "chats")
 }
@@ -127,13 +138,27 @@ model Subscription {
   @@map(name: "subscriptions")
 }
 
+model ChatMember {
+  user      User     @relation(fields: [userId], references: [userId])
+  userId    BigInt   @map("user_id")
+  chat      Chat     @relation(fields: [chatId], references: [chatId])
+  chatId    BigInt   @map("bot_id")
+  status    Status
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, chatId])
+  @@map("chat_members")
+}
+
 model BotChats {
   bot            Bot      @relation(fields: [botId], references: [botId])
   botId          BigInt   @map("bot_id")
   chat           Chat     @relation(fields: [chatId], references: [chatId], onUpdate: Cascade, onDelete: Cascade)
   chatId         BigInt   @map("chat_id")
-  status         String?
+  status         Status?
   canInviteUsers Boolean?
+  forceSub       Boolean  @default(false)
   updatedAt      DateTime @updatedAt @map("updated_at")
   createdAt      DateTime @default(now()) @map("created_at")
 

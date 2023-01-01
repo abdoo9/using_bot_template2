@@ -107,16 +107,17 @@ const forceSubGroupMenu = new MenuTemplate<Context>((ctx) =>
 );
 
 const forceSubChannelMenu = new MenuTemplate<Context>((ctx) =>
-  ctx.t(`forceSubGroupMenu.messageText`)
+  ctx.t(`forceSubChannelMenu.messageText`)
 );
 
 const forceSubChannelsMenu = new MenuTemplate<Context>((ctx) =>
-  ctx.t(`forceSubGroupMenu.messageText`)
+  ctx.t(`forceSubChannelsMenu.messageText`)
 );
+
 // start menu start
 startMenu.submenu((ctx) => ctx.t(`start_menu.add_bot`), "addbot", addBotMenu);
 
-startMenu.submenu((ctx) => ctx.t(`start_menu.my_bots`), "mybots", myBotsMenu, {
+startMenu.submenu((ctx) => ctx.t(`start_menu.my_bots`), "bots", myBotsMenu, {
   joinLastRow: true,
 });
 
@@ -124,7 +125,7 @@ startMenu.submenu((ctx) => ctx.t(`start_menu.my_bots`), "mybots", myBotsMenu, {
 
 // my botsMenu start
 myBotsMenu.chooseIntoSubmenu(
-  "bot",
+  "B",
   async (ctx) => {
     return (
       ctx.local.user?.botsOwned.reduce((acc, bot) => {
@@ -172,7 +173,7 @@ botMenu.submenu((ctx) => ctx.t(`bot_menu.replies`), "replies", repliesMenu, {
 
 botMenu.submenu(
   (ctx) => ctx.t(`bot_menu.force_subscribe`),
-  "force_sub",
+  "f_sub",
   forceSubMenu
 );
 botMenu.submenu(
@@ -285,13 +286,13 @@ groupSettingsMenu.manualRow(
 
 forceSubMenu.submenu(
   (ctx) => ctx.t("force_sub_channel.add_channel"),
-  "addChannel",
-  forceSubChannelMenu
+  "addC",
+  forceSubChannelsMenu
 );
 
 forceSubMenu.submenu(
   (ctx) => ctx.t("force_sub_group.add_group"),
-  "addGroup",
+  "addG",
   forceSubGroupMenu
 );
 
@@ -304,19 +305,122 @@ forceSubMenu.manualRow(
 
 // force sub menu end
 
-// forceSubChannelMenu start
+// forceSubChannelsMenu start
 
-forceSubChannelMenu.chooseIntoSubmenu(
-  "ch",
+forceSubChannelsMenu.chooseIntoSubmenu(
+  "C",
   async (ctx) => {
     const bot = await botsService.findBotChannels(Number(ctx.match?.[1]));
     return (
-      bot?.botChats.reduce((acc, botChat) => {
-        return { ...acc, [String(botChat.chatId)]: `@${botChat.chat.title}` };
-      }, {}) || []
+      bot?.botChats
+        .sort((a, b) => {
+          // eslint-disable-next-line no-unused-expressions, no-nested-ternary
+          return a.forceSub === b.forceSub ? 0 : a.forceSub ? -1 : 1;
+        })
+        .reduce((acc, botChat) => {
+          return {
+            ...acc,
+            [String(botChat.chatId)]: `${botChat.forceSub ? "🔳" : "◼️"} ${
+              botChat.chat.title
+            }`,
+          };
+        }, {}) || []
     );
   },
-  forceSubChannelsMenu
+  forceSubChannelMenu,
+  {
+    columns: 1,
+  }
+);
+
+forceSubChannelsMenu.manualRow(
+  createBackMainMenuButtons(
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
+  )
+);
+// forceSubChannelsMenu end
+
+// forceSubChannelMenu start
+
+forceSubChannelMenu.interact(
+  (ctx) => ctx.t("foce_sub_channel_menu.add_to_force_sub"),
+  "add",
+  {
+    do: async (ctx) => {
+      const x = await ctx.api
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        .getChatAdministrators(ctx.match![2])
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .then(async (administrators) => {
+          await botsService.updateForceSub(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            Number(ctx.match![1]),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            Number(ctx.match![2]),
+            true
+          );
+          return "..";
+        })
+        .catch(async (err) => {
+          await ctx.answerCallbackQuery("bot is not admin");
+          await botsService.updateBotChatStatus(
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            Number(ctx.match![1]),
+            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+            Number(ctx.match![2]),
+            "left"
+          );
+          return "..";
+        });
+      return x;
+      // const bot = await botsService.findBotChannels(Number(ctx.match?.[1]));
+      // ctx.answerCallbackQuery();
+    },
+    hide: async (ctx) => {
+      const forceSub = await botsService.botForceSub(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Number(ctx.match![1]),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Number(ctx.match![2])
+      );
+      return !!forceSub?.botChats[0].forceSub;
+    },
+  }
+);
+
+forceSubChannelMenu.interact(
+  (ctx) => ctx.t("foce_sub_channel_menu.del_from_force_sub"),
+  "del",
+  {
+    do: async (ctx) => {
+      await botsService.updateForceSub(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Number(ctx.match![1]),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Number(ctx.match![2]),
+        false
+      );
+      await ctx.answerCallbackQuery("removed successfully");
+      return "..";
+    },
+    hide: async (ctx) => {
+      const forceSub = await botsService.botForceSub(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Number(ctx.match![1]),
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        Number(ctx.match![2])
+      );
+      return !forceSub?.botChats[0].forceSub;
+    },
+  }
+);
+
+forceSubChannelMenu.manualRow(
+  createBackMainMenuButtons(
+    (ctx) => ctx.t(`bot_menu.back`),
+    (ctx) => ctx.t(`bot_menu.mainMenu`)
+  )
 );
 
 // forceSubChannelMenu end

@@ -32,6 +32,7 @@ import {
   setReply,
   setGroup,
   upsertChat,
+  chatMember,
 } from "~/bot/features";
 import { isMultipleLocales } from "~/bot/helpers/i18n";
 import { handleError } from "~/bot/helpers/error-handler";
@@ -79,6 +80,7 @@ export async function getBot(botToken: string): Promise<Bot<Context>> {
   // Handlers
 
   bot.use(upsertChat);
+  bot.use(chatMember);
   bot.use(botAdminFeature);
   bot.use(welcomeFeature);
   bot.use(languageSelectFeature);
