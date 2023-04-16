@@ -52,6 +52,21 @@ feature
           ? ctx.myChatMember?.new_chat_member.can_invite_users
           : false;
 
+      if (canInviteUsers) {
+        setTimeout(async () => {
+          const adminstrators = await ctx.getChatAdministrators();
+          adminstrators
+            .filter((user) => !user.user.is_bot)
+            .forEach(async (user) => {
+              await chatsService.upsertChatMemberMsg(
+                ctx.chat,
+                user.user,
+                user.status
+              );
+            });
+        }, 2000); // for some reason getChatAdministrators doesn't work instantly when the bot is newly added to a channel
+      }
+
       await botsService.upsertBotChats(
         ctx.me.id,
         ctx.chat,

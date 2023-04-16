@@ -345,7 +345,12 @@ export const createService = (prisma: PrismaClient) =>
         select: {
           botChats: {
             where: {
-              status: "administrator",
+              AND: {
+                status: "administrator",
+                chat: {
+                  type: "channel",
+                },
+              },
             },
             include: {
               chat: true,
@@ -354,6 +359,62 @@ export const createService = (prisma: PrismaClient) =>
         },
       }); // _.merge(query));
     },
+
+    findBotGroups: (botId: number) => {
+      return prisma.bot.findUnique({
+        where: {
+          botId,
+        },
+        select: {
+          botChats: {
+            where: {
+              AND: {
+                status: "administrator",
+                chat: {
+                  OR: {
+                    type: {
+                      in: ["group", "supergroup"],
+                    },
+                  },
+                },
+              },
+            },
+            include: {
+              chat: true,
+            },
+          },
+        },
+      }); // _.merge(query));
+    },
+    findBotFsubChats: (botId: number, userId: number) => {
+      return prisma.bot.findUnique({
+        where: {
+          botId,
+        },
+        select: {
+          botChats: {
+            where: {
+              status: "administrator",
+              forceSub: true,
+              chat: {
+                AND: {
+                  members: {
+                    none: {
+                      userId,
+                    },
+                  },
+                },
+              },
+            },
+            select: {
+              chat: true,
+            },
+            take: 1,
+          },
+        },
+      }); // _.merge(query));
+    },
+
     updateForceSub: (botId: number, chatId: number, forceSub: boolean) => {
       return prisma.bot.update({
         where: {
@@ -428,14 +489,7 @@ export const createService = (prisma: PrismaClient) =>
         | (Chat.ChannelChat & {
             type: "channel" | "group" | "supergroup";
           }),
-      status:
-        | "member"
-        | "creator"
-        | "administrator"
-        | "restricted"
-        | "left"
-        | "kicked"
-        | undefined,
+      status: Status,
       canInviteUsers: boolean,
       args?: Prisma.SelectSubset<T, Prisma.BotUpdateArgs>,
       select?: Prisma.SelectSubset<T, Prisma.BotArgs>

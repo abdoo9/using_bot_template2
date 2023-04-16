@@ -1,6 +1,6 @@
 import _ from "lodash";
 import type { Prisma, PrismaClient, Status } from "@prisma/client";
-import { Chat, ChatMemberUpdated, Message, User } from "grammy/types";
+import { Chat, ChatMemberUpdated, User } from "grammy/types";
 
 export const createService = (prisma: PrismaClient) =>
   Object.assign(prisma.user, {

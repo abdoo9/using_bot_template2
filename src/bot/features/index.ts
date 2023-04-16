@@ -11,5 +11,6 @@ export { composer as setReply } from "./set-reply.feature";
 export { composer as setGroup } from "./set-group.feature";
 export { composer as upsertChat } from "./upsert-chat.feature";
 export { composer as chatMember } from "./chat-member.feature";
+export { composer as forceSub } from "./force-sub.feature";
 // TODO: handle user block the bot
 // TODO: handle admin block the bot

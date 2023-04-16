@@ -46,7 +46,7 @@ model User {
   firstName         String         @default("first_name") @map("first_name")
   lastName          String?        @map("last_name")
   username          String?        @map("username") @db.VarChar(32)
-  languageCode      String?        @map("language_code") @db.Char(2)
+  languageCode      String?        @map("language_code") @db.VarChar(3)
   userIsDeactivated Boolean        @default(false) @map("user_is_deactivated")
   ChatNotFound      Boolean        @default(false) @map("chat_not_found")
   updatedAt         DateTime       @updatedAt @map("updated_at")
@@ -142,7 +142,7 @@ model ChatMember {
   user      User     @relation(fields: [userId], references: [userId])
   userId    BigInt   @map("user_id")
   chat      Chat     @relation(fields: [chatId], references: [chatId])
-  chatId    BigInt   @map("bot_id")
+  chatId    BigInt   @map("chat_id")
   status    Status
   updatedAt DateTime @updatedAt @map("updated_at")
   createdAt DateTime @default(now()) @map("created_at")

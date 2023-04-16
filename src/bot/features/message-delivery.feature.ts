@@ -21,7 +21,6 @@ import { escapeHTML } from "~/bot/helpers/escape-html";
 async function errorHandler(err: BotError<Context>, next: NextFunction) {
   const error = err.error as GrammyError;
   const { ctx } = err;
-  console.error(err);
   if (
     error.description === "Bad Request: replied message not found" &&
     error.method === "forwardMessage" &&
